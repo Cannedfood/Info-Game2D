@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package game2d.game.enemy;
+package game2d.game;
 
 import game2d.level.Entity;
 import game2d.level.Mob;

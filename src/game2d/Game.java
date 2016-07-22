@@ -9,12 +9,22 @@ import java.util.logging.Logger;
 public class Game implements Runnable {
     private static Level  LEVEL;
     private static Backend BACKEND;
+    
+    /** Sets the backend (statically)
+     * @param backend The new back end */
     public static void    setBackend(Backend backend) { BACKEND = backend; }
+    
+    /** Returns the current backend.
+     * @return Returns the current backend
+     */
     public static Backend getBackend() { return BACKEND; }
     
+    /** Returns the current level (statically).
+     * @return  The current level. */
+    public static final Level getLevel() { return LEVEL; }
     
-    private final Thread mLogicThread;
-    private boolean mRunning = false;
+    private final Thread mLogicThread; //!< The thread running game logic
+    private boolean mRunning = false;  //!< Whether the game
     
     public Game() {
         if(LEVEL == null)
@@ -22,12 +32,18 @@ public class Game implements Runnable {
         mLogicThread = new Thread(this);
     }
 
+    /** Renders the whole level.
+     * Will not call Backend.flush()!
+     */
     public void render() {
         LEVEL.onDraw(getBackend());
         getBackend().flush();
     }
     
-    public void start() throws Exception {
+    /** Starts the logic thread / the game. 
+     * @throws java.lang.IllegalStateException when the game is already running.
+     */
+    public void start() throws IllegalStateException {
         if(mRunning)
             throw new IllegalStateException("Tried to start the game twice");
         
@@ -35,28 +51,37 @@ public class Game implements Runnable {
         mLogicThread.start();
     }
     
-    public void stop() throws Exception {
+    /** Stops the game thread, keeping the game state intact.
+     * @throws java.lang.IllegalStateException when the game isn't running.
+     */
+    public void stop() throws IllegalStateException {
         if(!mRunning)
             throw new IllegalStateException("Tried to stop a game that was not running");
         
         mRunning = false;
-        mLogicThread.join(2000);
+        try {
+            mLogicThread.join(2000);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Game.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
     }
 
     @Override
+    /** Entry point for the Logic thread. */
     public void run() {
         while(mRunning) {
-            getBackend().preUpdate(this, 0.01f);
-            
+            onUpdate(.01f);
             try { Thread.sleep(10); } 
             catch (InterruptedException ex) {
                 Logger.getLogger(Game.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
             }
-            
-            LEVEL.update(0.01f);
-            getBackend().postUpdate(this, 0.01f);
         }
     }
     
-    public static final Level getLevel() { return LEVEL; }
+    /** Is called by the logic thread on every logic tick. */
+    void onUpdate(float dt) {
+        getBackend().preUpdate(this, 0.01f);
+        LEVEL.onUpdate(0.01f);
+        getBackend().postUpdate(this, 0.01f);
+    }
 }

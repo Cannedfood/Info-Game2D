@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package game2d.game;
 
 import game2d.Renderer;
@@ -11,10 +6,6 @@ import game2d.level.Mob;
 import game2d.level.SimpleParticle;
 import java.util.Random;
 
-/**
- *
- * @author benno
- */
 public class Mine extends Entity {
     
     public Mine(float x, float y) {

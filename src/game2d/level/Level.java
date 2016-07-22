@@ -1,44 +1,57 @@
 package game2d.level;
 
+import com.sun.istack.internal.Nullable;
 import game2d.Renderer;
 import java.util.ArrayList;
 
+/** A level, managing entities and tiles as well as their physics and rendering. */
 public class Level {
     private final ArrayList<Entity> mEntities = new ArrayList<>();
     
     private int mWidth, mHeight;
     private Tile[] mTiles;
     
-    public Level(int x, int y) {
-        mWidth = x;
-        mHeight = y;
-        mTiles = new Tile[x * y];
+    /** Creates a level of size w*h
+     * @param w The width of the level
+     * @param h The height of the level
+     */
+    public Level(int w, int h) {
+        mWidth = w;
+        mHeight = h;
+        mTiles = new Tile[w * h];
     }
     
-    public void onDraw(Renderer b) {
+    /** Renders the tiles and entities touching the camera frustum.
+     * @param r The rendering backend.
+     */
+    public void onDraw(Renderer r) {
         synchronized(mEntities) {
-            int minx = Math.max(0, (int)Math.floor(b.getCamera().offset_x));
-            int miny = Math.max(0, (int)Math.floor(b.getCamera().offset_y));
-            int maxx = Math.min(mWidth, (int)Math.ceil(b.getCamera().offset_x + b.getCamera().width));
-            int maxy = Math.min(mHeight, (int)Math.ceil(b.getCamera().offset_y + b.getCamera().height));
+            int minx = Math.max(0, (int)Math.floor(r.getCamera().offset_x));
+            int miny = Math.max(0, (int)Math.floor(r.getCamera().offset_y));
+            int maxx = Math.min(mWidth, (int)Math.ceil(r.getCamera().offset_x + r.getCamera().width));
+            int maxy = Math.min(mHeight, (int)Math.ceil(r.getCamera().offset_y + r.getCamera().height));
         
             for(int y = miny; y < maxy; y++) {
                 int precalc_y = y * mWidth;
                 for(int x = minx; x < maxx; x++) {
                     Tile t = mTiles[precalc_y + x];
-                    if(t != null) t.onDraw(b, x, y);
+                    if(t != null) t.onDraw(r, x, y);
                 }
             }
         
             for(int i = 0; i < mEntities.size(); ++i) {
                 Entity e = mEntities.get(i);
-                if(b.getCamera().touches(e))
-                    e.onDraw(b);
+                if(r.getCamera().touches(e))
+                    e.onDraw(r);
             }
         }
     }
     
-    public void update(float dt) {
+    /** Is called every game tick and updates all entities and updatable tiles.
+     * The updating includes the resolving of collisions.
+     * @param dt The time difference since the last tick.
+     */
+    public void onUpdate(float dt) {
         // Update all entities
         for(int i = 0; i < mEntities.size(); ++i) {
             Entity e = mEntities.get(i);
@@ -158,6 +171,7 @@ public class Level {
                 e.updateCache(e.x, e.y);
             }
             
+            // Making sure the entity doesn't fall out of the level.
             if(e.cache_x_min < 0) {
                 e.x -= e.cache_x_min;
                 e.motion_x = 0;
@@ -178,6 +192,10 @@ public class Level {
         }
     }
     
+    /** Adds an entity.
+     * Is synchronized to the entity list, which can interfere with rendering on very high frame rates.
+     * @param e The entity to add
+     */
     public void add(Entity e) {
         synchronized(mEntities) {
             mEntities.add(e);
@@ -188,15 +206,35 @@ public class Level {
     
     /* Tile related methods */
     
+    /** Gets a tile below a specific coordinate.
+     * @param x The x coordinate of the Tile
+     * @param y The y coordinate of the Tile
+     * @return The tiles at { x, y } or null.
+     */
     public Tile getTile(float x, float y) { return getTile((int)x, (int)y); }
+    /** Gets a tile at a specific coordinate.
+     * @param x The x coordinate of the Tile
+     * @param y The y coordinate of the Tile
+     * @return The tiles at { x, y } or null.
+     */
     public Tile getTile(int x, int y) {
         int indx = x + y * mWidth;
         if(indx < 0 || indx > mTiles.length)
             return null;
         return mTiles[indx];
     }
-
+    
+    /** Gets a tile below a specific coordinate.
+     * @param x The x coordinate of the Tile
+     * @param y The y coordinate of the Tile
+     * @param t
+     */
     public void setTile(float x, float y, Tile t) { setTile((int)x, (int)y, t); }
+    /** Gets a tile at a specific coordinate.
+     * @param x The x coordinate of the Tile
+     * @param y The y coordinate of the Tile
+     * @param t The tile to be set to
+     */
     public void setTile(int x, int y, Tile t) {
         int indx = x + y * mWidth;
         /*if(indx < 0 || indx > mTiles.length)
@@ -204,10 +242,14 @@ public class Level {
         mTiles[indx] = t;
     }
     
+    /** Fills a rectangle with tiles of a certain type.
+     */
     public void setTiles(float x, float y, float w, float h, Tile t) {
         setTiles((int)x, (int)y,(int)w, (int)h, t);
     }
     
+    /** Fills a rectangle with tiles of a certain type.
+     */
     public void setTiles(int x, int y, int w, int h, Tile t) {
         w = Math.min(x + w, mWidth);
         h = Math.min(y + h, mHeight);
