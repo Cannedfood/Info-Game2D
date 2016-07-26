@@ -46,6 +46,6 @@ public class Mob extends Entity {
             r.drawSprite(mCurrentSprite, cache_x_min, cache_y_min, width, height);
         else
             super.onDraw(r);
-        
+        r.debugDraw(this);
     }
 }

@@ -2,7 +2,6 @@ package game2d.backend;
 
 import game2d.Backend;
 import game2d.Game;
-import game2d.Renderer;
 import game2d.Sprite;
 import game2d.level.Hitbox;
 import java.awt.Canvas;
@@ -43,10 +42,10 @@ public class AwtBackend extends Backend implements MouseWheelListener, MouseMoti
     
     private final JFrame mFrame;
     private final Canvas mCanvas;
-    private Graphics mGraphics;
+    private final Graphics mGraphics;
     
     public AwtBackend() {
-        Dimension size = new Dimension(1024, 1024);
+        Dimension size = new Dimension(1280, 720);
         mCanvas = new Canvas();
         mCanvas.setPreferredSize(size);
         
@@ -74,6 +73,7 @@ public class AwtBackend extends Backend implements MouseWheelListener, MouseMoti
         getInput().add("scroll state", 0);
         getInput().add("move.x", 0);
         getInput().add("move.y", 0);
+        getInput().add("reset", 0);
         
         mCanvas.addMouseMotionListener(this);
         mCanvas.addMouseWheelListener(this);
@@ -94,14 +94,17 @@ public class AwtBackend extends Backend implements MouseWheelListener, MouseMoti
     }
     
     @Override
-    public void setCamera(Hitbox h) {
-        super.setCamera(h);
+    public void setCamera(float x, float y, float tiles_height) {
+        getCamera().height = tiles_height;
+        getCamera().width  = tiles_height * mCanvas.getWidth() / (float)mCanvas.getHeight();
+        getCamera().offset_x = x - getCamera().width  * .5f;
+        getCamera().offset_y = y - getCamera().height * .5f;
         updateCamCache();
     }
     
     /* Utility functions to transform to camera space */
     int cx, cy, cw, ch;
-    private final void camSpace(float x, float y, float w, float h) {
+    private void camSpace(float x, float y, float w, float h) {
         cw = (int)Math.ceil(w * cam_scalex);
         ch = (int)Math.ceil(h * cam_scaley);
         cx = (int)Math.floor((x + cam_offx) * cam_scalex);
@@ -127,9 +130,8 @@ public class AwtBackend extends Backend implements MouseWheelListener, MouseMoti
     
     @Override
     public void drawRect(int color, float x, float y, float w, float h) {
-        if(color != last_color) {
+        if(color != last_color)
             mGraphics.setColor(new Color(last_color = color)); //< Horrible!! DO NOT create new Objects while rendering!!
-        }
         
         camSpace(x, y, w, h);
         mGraphics.fillRect(cx, cy, cw, ch);
@@ -142,7 +144,8 @@ public class AwtBackend extends Backend implements MouseWheelListener, MouseMoti
     
     @Override
     public void debugDraw(Hitbox h) {
-        camSpace(h.offset_x, h.offset_y, h.width, h.height);
+        camSpace(h.cache_x_min, h.cache_y_min, h.width, h.height);
+        mGraphics.setColor(Color.RED);
         mGraphics.drawRect(cx, cy, cw, ch);
     }
 
@@ -169,7 +172,7 @@ public class AwtBackend extends Backend implements MouseWheelListener, MouseMoti
             BufferedImage bi = null;
          
            try {
-                bi = ImageIO.read(new File(file));
+                bi = ImageIO.read(new File("./ressource/" + file));
             } catch (IOException ex) {
                 Logger.getLogger(AwtBackend.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -299,6 +302,10 @@ public class AwtBackend extends Backend implements MouseWheelListener, MouseMoti
                 getInput().resetSign("move.y", -1f);
                 break;
             
+            case KeyEvent.VK_ENTER:
+                getInput().set("reset", true);
+                break;
+                
             default: break;
         }
     }

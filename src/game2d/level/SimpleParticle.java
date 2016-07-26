@@ -25,6 +25,13 @@ public class SimpleParticle extends Entity {
     }
     
     @Override
+    public boolean onCollide(Entity other) {
+        if(other instanceof Mob)
+            other.kill();
+        return true;
+    }
+    
+    @Override
     public void onUpdate(float dt) {
         super.onUpdate(dt);
     }

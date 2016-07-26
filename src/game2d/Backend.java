@@ -34,11 +34,7 @@ public abstract class Backend implements Renderer {
      */
     public abstract void postUpdate(Game g, float dt);
     
-    @Override
-    public void setCamera(Hitbox h) {
-        mCamera.setHitbox(h);
-        mCamera.updateCache(0, 0);
-    }
+    public abstract void setCamera(float x, float y, float tiles_in_height);
     
     @Override
     public final Hitbox getCamera() { return mCamera; }

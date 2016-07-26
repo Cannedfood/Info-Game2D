@@ -16,9 +16,15 @@ import game2d.level.Tile;
  * @author benno
  */
 public class GameProject extends Game {
-    private final Player mPlayer;
+    private Player mPlayer;
     
     public GameProject() {
+        reset();
+    }
+    
+    private void reset() {
+        getLevel().getEntities().clear();
+        
         // Create a checkerboard patters of tiles
         Tile t;
         
@@ -49,17 +55,17 @@ public class GameProject extends Game {
         getLevel().add(e);
     }
     
+    @Override
+    protected void onUpdate(float dt) {
+        super.onUpdate(dt);
+        if(getBackend().getInput().poll("reset")) reset();
+    }
     
     @Override
-    public void render() {
+    public void onRender() {
         Renderer r = getBackend();
         float cam_size = 16 - getBackend().getInput().getValue("scroll state");
-        r.getCamera().width = cam_size;
-        r.getCamera().height = cam_size;
-        r.getCamera().offset_x = mPlayer.x - cam_size * .5f;
-        r.getCamera().offset_y = mPlayer.y - cam_size * .5f;
-        r.setCamera(r.getCamera());
-        //r.debugDraw(r.getCamera());
-        super.render();
+        r.setCamera(mPlayer.x, mPlayer.y, cam_size);
+        super.onRender();
     }
 }

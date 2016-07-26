@@ -1,6 +1,5 @@
 package game2d.level;
 
-import com.sun.istack.internal.Nullable;
 import game2d.Renderer;
 import java.util.ArrayList;
 
@@ -8,8 +7,8 @@ import java.util.ArrayList;
 public class Level {
     private final ArrayList<Entity> mEntities = new ArrayList<>();
     
-    private int mWidth, mHeight;
-    private Tile[] mTiles;
+    private final int mWidth, mHeight;
+    private final Tile[] mTiles;
     
     /** Creates a level of size w*h
      * @param w The width of the level
@@ -262,6 +261,18 @@ public class Level {
                 mTiles[ypre + x] = t;
             }
         }
+    }
+    
+    /**
+     * @param <CEntity>
+     * @param spread
+     * @param speed
+     * @param angle_min
+     * @param angle_max
+     * @param sample
+     */
+    public <CEntity> void explode(float spread, float speed, float angle_min, float angle_max, Entity sample) {
+        
     }
     
     /* Getters and setters */

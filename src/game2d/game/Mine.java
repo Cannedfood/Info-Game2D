@@ -53,11 +53,8 @@ public class Mine extends Entity {
                         size,
                         weight
                 );
-                /*e.weight = weight;
-                e.width = size;
-                e.height = size;
-                e.addFlags(FLAG_UNIMPORTANT);
-                e.setCollisionMask(MASK_PARTICLE);*/
+                
+                e.setCollisionMask(Entity.MASK_PARTICLE | Entity.MASK_DEFAULT);
                 
                 getLevel().add(e);
             }
@@ -70,6 +67,8 @@ public class Mine extends Entity {
     public boolean onCollide(Entity other) {
         if(other instanceof Mob)
             kill();
+        
+        kill();
         
         return true;
     }

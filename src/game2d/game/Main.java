@@ -2,6 +2,7 @@ package game2d.game;
 
 import game2d.Game;
 import game2d.backend.AwtBackend;
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -9,7 +10,7 @@ import java.util.logging.Logger;
  * The sole purpose of this class is to hold the main method
  */
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         AwtBackend backend = new AwtBackend();
         Game.setBackend(backend);
         
@@ -30,14 +31,9 @@ public class Main {
             
             long beg = System.currentTimeMillis();
             
-            game.render(); //<< This code renders asynchronously
+            game.onRender();//<< This code renders asynchronously
             
             dif = beg - System.currentTimeMillis();
         } while(true);
-        
-        /*try { game.stop(); } 
-        catch (Exception ex) {
-            Logger.getLogger(Game.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }*/
     }
 }

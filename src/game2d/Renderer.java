@@ -11,6 +11,6 @@ public interface Renderer {
     public void debugDraw(Hitbox h);
     public void flush();
     
-    public void setCamera(Hitbox h);
+    public void setCamera(float x, float y, float tiles_in_height);
     public Hitbox getCamera();
 }

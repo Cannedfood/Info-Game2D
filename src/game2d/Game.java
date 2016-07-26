@@ -31,14 +31,6 @@ public class Game implements Runnable {
             LEVEL = new Level(64, 64);
         mLogicThread = new Thread(this);
     }
-
-    /** Renders the whole level.
-     * Will not call Backend.flush()!
-     */
-    public void render() {
-        LEVEL.onDraw(getBackend());
-        getBackend().flush();
-    }
     
     /** Starts the logic thread / the game. 
      * @throws java.lang.IllegalStateException when the game is already running.
@@ -78,8 +70,16 @@ public class Game implements Runnable {
         }
     }
     
+    /** Renders the whole level.
+     * Will not call Backend.flush()!
+     */
+    public void onRender() {
+        LEVEL.onDraw(getBackend());
+        getBackend().flush();
+    }
+    
     /** Is called by the logic thread on every logic tick. */
-    void onUpdate(float dt) {
+    protected void onUpdate(float dt) {
         getBackend().preUpdate(this, 0.01f);
         LEVEL.onUpdate(0.01f);
         getBackend().postUpdate(this, 0.01f);

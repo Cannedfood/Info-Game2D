@@ -1,6 +1,7 @@
 package game2d.level;
 
 import game2d.Input;
+import java.util.Random;
 
 public class Player extends Mob {
     private Input mInput;
@@ -18,10 +19,41 @@ public class Player extends Mob {
     }
     
     private final void init() {
-        setHitbox(1, 1);
+        setHitbox(4, 4);
         weight = 1.f;
-        mLeftSprite  = loadSprite("/home/benno/Pictures/Ball-left.png");
-        mRightSprite = loadSprite("/home/benno/Pictures/Ball-right.png");
+        mLeftSprite  = loadSprite("sprite/pikapi-l.png");
+        mRightSprite = loadSprite("sprite/pikapi-r.png");
+    }
+    
+    @Override
+    public void kill() {
+        if(!isDead()) {
+            Random r = new Random();
+            
+            for(int i = 0; i < width * height * 20; i++) {
+                final float min_size = 0.05f;
+                final float max_size = 0.4f;
+                final float speed = 10f;
+                
+                float angle = (float) (r.nextFloat() * Math.PI * 2);
+                
+                float ex = cache_x_min + r.nextFloat() * width;
+                float ey = cache_y_min + r.nextFloat() * height;
+                
+                float rand_size = r.nextFloat();
+                
+                float size = min_size * (1 - rand_size) + max_size * rand_size;
+                
+                float sin = (float) Math.sin(angle) * speed;
+                float cos = (float) Math.cos(angle) * speed;
+                
+                Entity p = new SimpleParticle(ex, ey, sin, cos, 0xFF880000, size, size);
+                p.setCollisionMask(Entity.MASK_GHOST);
+                p.weight = size * size * 100f;
+                getLevel().add(p);
+            }
+            super.kill();
+        }
     }
     
     @Override

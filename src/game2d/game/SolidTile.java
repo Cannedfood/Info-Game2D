@@ -6,7 +6,6 @@
 package game2d.game;
 
 import game2d.Renderer;
-import game2d.Sprite;
 import game2d.level.Tile;
 
 /**
