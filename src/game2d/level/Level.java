@@ -2,9 +2,11 @@ package game2d.level;
 
 import game2d.Renderer;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /** A level, managing entities and tiles as well as their physics and rendering. */
 public class Level {
+    private final HashMap<String, Entity> mByName = new HashMap<>();
     private final ArrayList<Entity> mEntities = new ArrayList<>();
     
     private final int mWidth, mHeight;
@@ -272,8 +274,22 @@ public class Level {
      * @param sample
      */
     public <CEntity> void explode(float spread, float speed, float angle_min, float angle_max, Entity sample) {
-        
+        // TODO
     }
+    
+    public void setName(Entity e, String name) {
+        // TODO
+    }
+    
+    public void removeName(Entity e) {
+        // TODO
+    }
+    
+    public void removeName(String name) {
+        // TODO
+    }
+    
+    final Entity get(String name) { return mByName.get(name); }
     
     /* Getters and setters */
     

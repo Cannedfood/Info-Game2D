@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package game2d.game;
 
 import game2d.Game;
@@ -11,10 +6,6 @@ import game2d.level.Entity;
 import game2d.level.Player;
 import game2d.level.Tile;
 
-/**
- *
- * @author benno
- */
 public class GameProject extends Game {
     private Player mPlayer;
     
@@ -47,7 +38,7 @@ public class GameProject extends Game {
             getLevel().setTile(i, i, t);
         }
         
-        mPlayer = new Player(5, 50, 3f, 30f, getBackend().getInput());
+        mPlayer = new Player(5, 50, 0f, 0f, getBackend().getInput());
         getLevel().add(mPlayer);
         
         Entity e = new Mine(10, getLevel().getHeight() - 1);
