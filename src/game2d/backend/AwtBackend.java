@@ -79,6 +79,8 @@ public class AwtBackend extends Backend implements MouseWheelListener, MouseMoti
         mCanvas.addMouseWheelListener(this);
         mCanvas.addMouseListener(this);
         mCanvas.addKeyListener(this);
+        
+        mFrame.requestFocus();
     }
     
     int mouse_x, mouse_y;
