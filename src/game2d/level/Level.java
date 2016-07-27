@@ -54,6 +54,8 @@ public class Level {
      * @param dt The time difference since the last tick.
      */
     public void onUpdate(float dt) {
+        // TODO: Make level collisions continuous
+        
         // Update all entities
         for(int i = 0; i < mEntities.size(); ++i) {
             Entity e = mEntities.get(i);
@@ -64,7 +66,13 @@ public class Level {
                 --i;
             }
             else {
+                e.motion_y -= e.weight * 9.81f * dt;
+                
                 e.onUpdate(dt);
+                
+                e.x += e.motion_x * dt;
+                e.y += e.motion_y * dt;
+                
                 e.onPostUpdate(dt);
                 e.updateCache(e.x, e.y);
             }
@@ -101,6 +109,8 @@ public class Level {
                         
                         float k = .5f; // TODO: respect mass
                         if(Math.abs(xd) < Math.abs(yd)) {
+                            e1.x += xd * k;
+                            e2.x -= xd * (1 - k);
                             e1.onResolve(e2, xd * k, 0);
                             e2.onResolve(e1, -xd * (1 - k), 0);
                             
@@ -109,6 +119,8 @@ public class Level {
                             e2.motion_x = e1_motion_x * .9f;
                         }
                         else {
+                            e1.y += yd * k;
+                            e2.y -= yd * (1 - k);
                             e1.onResolve(e2, 0, yd * k);
                             e2.onResolve(e1, 0, -yd * (1 - k));
                             
@@ -161,10 +173,12 @@ public class Level {
                 float yd = Math.abs(yp) < Math.abs(yn) ? yp : yn;
                         
                 if(Math.abs(xd) < Math.abs(yd)) {
+                    e.x += xd;
                     e.onResolve(null, xd, 0);
                     e.motion_x = 0;
                 }
                 else {
+                    e.y += yd;
                     e.onResolve(null, 0, yd);
                     e.motion_y = 0;
                 }
@@ -175,19 +189,23 @@ public class Level {
             // Making sure the entity doesn't fall out of the level.
             if(e.cache_x_min < 0) {
                 e.motion_x = 0;
+                e.x -= e.cache_x_min;
                 e.onResolve(null, -e.cache_x_min, 0);
             }
             else if(e.cache_x_max > mWidth) {
                 e.motion_x = 0;
+                e.x += mWidth - e.cache_x_max;
                 e.onResolve(null, mWidth - e.cache_x_max, 0);
             }
             
             if(e.cache_y_min < 0) {
                 e.motion_y = 0;
+                e.y -= e.cache_y_min;
                 e.onResolve(null, 0, -e.cache_y_min);
             }
             else if(e.cache_y_max > mHeight) {
                 e.motion_y = 0;
+                e.y += mHeight - e.cache_y_max;
                 e.onResolve(null, 0, mHeight - e.cache_y_max);
             }
         }

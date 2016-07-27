@@ -30,7 +30,7 @@ public class Player extends Mob {
     }
     
     private final void init() {
-        setHitbox(4, 4);
+        setHitbox(2, 2);
         weight = 4.f;
         
         mSpriteStandL = loadSprite("sprite/pika-stand-l.png");

@@ -48,12 +48,7 @@ public class Entity extends Hitbox {
     /** Is called every logic tick
      * @param dt The time since the last update in seconds
      */
-    public void onUpdate(float dt) {
-        motion_y -= weight * 9.81f * dt;
-        
-        x += motion_x * dt;
-        y += motion_y * dt;
-    }
+    public void onUpdate(float dt) {}
     
     public void onPostUpdate(float dt) {}
     
@@ -74,10 +69,7 @@ public class Entity extends Hitbox {
      * @param dx The x amount to resolve
      * @param dy The y amount to resolve
      */
-    public void onResolve(Entity e, float dx, float dy) {
-        x += dx;
-        y += dy;
-    }
+    public void onResolve(Entity e, float dx, float dy) {}
     
     /** Is called just before the entity is killed.
      * @return whether the entity should really be killed.

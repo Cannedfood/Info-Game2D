@@ -24,20 +24,21 @@ import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 
-public class AwtBackend extends Backend implements MouseWheelListener, MouseMotionListener, MouseListener, KeyListener {
+public final class AwtBackend extends Backend implements MouseWheelListener, MouseMotionListener, MouseListener, KeyListener {
     
-    class AwtSprite implements Sprite {
-        BufferedImage mImage;
-
-        @Override
-        public int getWidth() { return mImage.getWidth(); }
-
-        @Override
-        public int getHeight() { return mImage.getHeight(); }
+    private final class AwtSprite implements Sprite {
+        public BufferedImage mImage;
         
         AwtSprite(BufferedImage img) {
             mImage = img;
         }
+        
+        @Override
+        public int getWidth() { return mImage.getWidth(); }
+        @Override
+        public int getHeight() { return mImage.getHeight(); }
+        @Override
+        public int colorAt(int x, int y) { return mImage.getRGB(x, y); }
     }
     
     private final JFrame mFrame;
@@ -200,7 +201,7 @@ public class AwtBackend extends Backend implements MouseWheelListener, MouseMoti
     
     @Override
     public void postUpdate(Game g, float dt) {
-        //g.render(); //<< This code renders after each update
+        g.onRender();//<< This code renders after each update
     }
     
     @Override

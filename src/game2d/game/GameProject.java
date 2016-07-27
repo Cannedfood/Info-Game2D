@@ -3,6 +3,7 @@ package game2d.game;
 import game2d.Game;
 import game2d.Renderer;
 import game2d.level.Entity;
+import game2d.level.LevelLoader;
 import game2d.level.Player;
 import game2d.level.Tile;
 import java.io.File;
@@ -61,6 +62,14 @@ public class GameProject extends Game {
             getLevel().setTile(i, i, t);
         }
         
+        LevelLoader ll = new LevelLoader();
+        
+        ll.setTile(0xFFFFFFFF, new WhiteTile(null, 0));
+        ll.setTile(0xFF000000, new BlackTile(null, 0));
+        ll.setTile(0xFFFF0000, new SolidTile());
+        
+        loadLevel(ll, getBackend().loadSprite("level/demo.png"));
+        
         // Add player
         mPlayer = new Player(5, 50, 0f, 0f, getBackend().getInput());
         getLevel().add(mPlayer);
@@ -70,10 +79,10 @@ public class GameProject extends Game {
         e.weight = .05f;
         getLevel().add(e);
         
-        if(bg_music == null)
+        /*if(bg_music == null)
             startTheMusic();
         else
-            bg_music.setFramePosition(0);
+            bg_music.setFramePosition(0);*/
     }
     
     @Override

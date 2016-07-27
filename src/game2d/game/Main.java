@@ -21,6 +21,15 @@ public class Main {
             Logger.getLogger(Game.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         
+        //*
+        while(true) {
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        /*/
         long dif = 0;
         do {
             try {
@@ -35,5 +44,6 @@ public class Main {
             
             dif = beg - System.currentTimeMillis();
         } while(true);
+        //*/
     }
 }

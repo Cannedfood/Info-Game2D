@@ -1,6 +1,7 @@
 package game2d;
 
 import game2d.level.Level;
+import game2d.level.LevelLoader;
 import java.util.Random;
 import java.util.logging.Logger;
 
@@ -34,6 +35,10 @@ public class Game implements Runnable {
         if(LEVEL == null)
             LEVEL = new Level(64, 64);
         mLogicThread = new Thread(this);
+    }
+    
+    protected static void loadLevel(LevelLoader ll, Sprite data) {
+        LEVEL = ll.loadLevel(data);
     }
     
     /** Starts the logic thread / the game. 
