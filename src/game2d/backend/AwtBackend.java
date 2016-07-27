@@ -89,6 +89,9 @@ public class AwtBackend extends Backend implements MouseWheelListener, MouseMoti
     float cam_offy, cam_scaley;
     
     private void updateCamCache() {
+        /*cam_offx = cam_offy = 0;
+        cam_scalex = mCanvas.getWidth()  / 64f;
+        cam_scaley = mCanvas.getHeight() / 64f;*/
         cam_offx = -getCamera().offset_x;
         cam_offy = -getCamera().offset_y;
         cam_scalex = mCanvas.getWidth() / getCamera().width;
@@ -101,6 +104,7 @@ public class AwtBackend extends Backend implements MouseWheelListener, MouseMoti
         getCamera().width  = tiles_height * mCanvas.getWidth() / (float)mCanvas.getHeight();
         getCamera().offset_x = x - getCamera().width  * .5f;
         getCamera().offset_y = y - getCamera().height * .5f;
+        getCamera().updateCache(0, 0);
         updateCamCache();
     }
     

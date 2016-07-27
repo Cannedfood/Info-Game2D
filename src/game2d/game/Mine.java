@@ -1,9 +1,11 @@
 package game2d.game;
 
+import game2d.Game;
 import game2d.Renderer;
 import game2d.level.Entity;
 import game2d.level.Mob;
-import game2d.level.SimpleParticle;
+import game2d.level.particle.DamagingParticle;
+import game2d.level.particle.SimpleParticle;
 import java.util.Random;
 
 public class Mine extends Entity {
@@ -20,11 +22,11 @@ public class Mine extends Entity {
     
     @Override
     public boolean onKill() {
-        Random r = new Random();
-            
+        Random r = getRandom();
         final float speed = 100f;
         final float size = 0.1f;
-        final float weight = 1f;
+        final float mass = 1f;
+        final float damage = 0f;
             
         final float distance = 3f;
             
@@ -45,12 +47,13 @@ public class Mine extends Entity {
                     (int)(r1 * rf + inv_rf * r2) << 16 | 
                     (int)(g1 * rf + inv_rf * g2) << 8;
                 
-            Entity e = new SimpleParticle(
+            Entity e = new DamagingParticle(
                     x + cos * d, y + sin * d, //< position
                     cos * speed, sin * speed, //< motion
                     c,               //< color
                     size,
-                    weight
+                    mass,
+                    damage
             );
                 
             e.setCollisionMask(Entity.MASK_PARTICLE | Entity.MASK_DEFAULT);

@@ -1,14 +1,18 @@
 package game2d;
 
 import game2d.level.Level;
+import java.util.Random;
 import java.util.logging.Logger;
 
 /**
  * The class running everything
  */
 public class Game implements Runnable {
+    private static Random mLogicRandom = new Random();
     private static Level  LEVEL;
     private static Backend BACKEND;
+    
+    public static Random getRandom() { return mLogicRandom; }
     
     /** Sets the backend (statically)
      * @param backend The new back end */

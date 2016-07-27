@@ -27,22 +27,23 @@ public class Level {
      */
     public void onDraw(Renderer r) {
         synchronized(mEntities) {
-            int minx = Math.max(0, (int)Math.floor(r.getCamera().offset_x));
-            int miny = Math.max(0, (int)Math.floor(r.getCamera().offset_y));
-            int maxx = Math.min(mWidth, (int)Math.ceil(r.getCamera().offset_x + r.getCamera().width));
-            int maxy = Math.min(mHeight, (int)Math.ceil(r.getCamera().offset_y + r.getCamera().height));
-        
+            int minx = Math.max(0, (int)Math.floor(r.getCamera().cache_x_min));
+            int miny = Math.max(0, (int)Math.floor(r.getCamera().cache_y_min));
+            int maxx = Math.min(mWidth, (int)Math.ceil(r.getCamera().cache_x_max));
+            int maxy = Math.min(mHeight, (int)Math.ceil(r.getCamera().cache_y_max));
+
             for(int y = miny; y < maxy; y++) {
                 int precalc_y = y * mWidth;
                 for(int x = minx; x < maxx; x++) {
                     Tile t = mTiles[precalc_y + x];
-                    if(t != null) t.onDraw(r, x, y);
+                    if(t != null)
+                        t.onDraw(r, x, y);
                 }
             }
-        
+
             for(int i = 0; i < mEntities.size(); ++i) {
                 Entity e = mEntities.get(i);
-                if(r.getCamera().touches(e))
+                if(e.touches(r.getCamera()))
                     e.onDraw(r);
             }
         }
@@ -64,6 +65,7 @@ public class Level {
             }
             else {
                 e.onUpdate(dt);
+                e.onPostUpdate(dt);
                 e.updateCache(e.x, e.y);
             }
         }
@@ -99,16 +101,16 @@ public class Level {
                         
                         float k = .5f; // TODO: respect mass
                         if(Math.abs(xd) < Math.abs(yd)) {
-                            e1.onResolve(xd * k, 0);
-                            e2.onResolve(-xd * (1 - k), 0);
+                            e1.onResolve(e2, xd * k, 0);
+                            e2.onResolve(e1, -xd * (1 - k), 0);
                             
                             float e1_motion_x = e1.motion_x;
                             e1.motion_x = e2.motion_x * .9f;
                             e2.motion_x = e1_motion_x * .9f;
                         }
                         else {
-                            e1.onResolve(0, yd * k);
-                            e2.onResolve(0, -yd * (1 - k));
+                            e1.onResolve(e2, 0, yd * k);
+                            e2.onResolve(e1, 0, -yd * (1 - k));
                             
                             float e1_motion_y = e1.motion_y;
                             e1.motion_y = e2.motion_y * .9f;
@@ -159,11 +161,11 @@ public class Level {
                 float yd = Math.abs(yp) < Math.abs(yn) ? yp : yn;
                         
                 if(Math.abs(xd) < Math.abs(yd)) {
-                    e.onResolve(xd, 0);
+                    e.onResolve(null, xd, 0);
                     e.motion_x = 0;
                 }
                 else {
-                    e.onResolve(0, yd);
+                    e.onResolve(null, 0, yd);
                     e.motion_y = 0;
                 }
                 
@@ -172,21 +174,21 @@ public class Level {
             
             // Making sure the entity doesn't fall out of the level.
             if(e.cache_x_min < 0) {
-                e.x -= e.cache_x_min;
                 e.motion_x = 0;
+                e.onResolve(null, -e.cache_x_min, 0);
             }
             else if(e.cache_x_max > mWidth) {
-                e.x -= e.cache_x_max - mWidth;
                 e.motion_x = 0;
+                e.onResolve(null, mWidth - e.cache_x_max, 0);
             }
             
             if(e.cache_y_min < 0) {
-                e.y -= e.cache_y_min;
                 e.motion_y = 0;
+                e.onResolve(null, 0, -e.cache_y_min);
             }
             else if(e.cache_y_max > mHeight) {
-                e.y -= e.cache_y_max - mHeight;
                 e.motion_y = 0;
+                e.onResolve(null, 0, mHeight - e.cache_y_max);
             }
         }
     }
@@ -211,6 +213,7 @@ public class Level {
      * @return The tiles at { x, y } or null.
      */
     public Tile getTile(float x, float y) { return getTile((int)x, (int)y); }
+    
     /** Gets a tile at a specific coordinate.
      * @param x The x coordinate of the Tile
      * @param y The y coordinate of the Tile
@@ -275,18 +278,8 @@ public class Level {
         // TODO
     }
     
-    public void setName(Entity e, String name) {
-        // TODO
-    }
-    
-    public void removeName(Entity e) {
-        // TODO
-    }
-    
-    public void removeName(String name) {
-        // TODO
-    }
-    
+    final public void setName(Entity e, String name) { mByName.put(name, e); }
+    final public void removeName(String name) { mByName.remove(name); }
     final public Entity get(String name) { return mByName.get(name); }
     
     

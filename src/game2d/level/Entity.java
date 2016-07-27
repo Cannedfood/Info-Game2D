@@ -4,6 +4,7 @@ import game2d.Backend;
 import game2d.Game;
 import game2d.Renderer;
 import game2d.Sprite;
+import java.util.Random;
 
 public class Entity extends Hitbox {
     public static final int 
@@ -54,6 +55,8 @@ public class Entity extends Hitbox {
         y += motion_y * dt;
     }
     
+    public void onPostUpdate(float dt) {}
+    
     public void onDraw(Renderer b) {
         b.drawRect(0xFFFF00FF, this);
     }
@@ -67,10 +70,11 @@ public class Entity extends Hitbox {
     }
     
     /** Is called whenever a collision was resolved.
+     * @param e Null (if colliding with the level) or the entity this has collided with.
      * @param dx The x amount to resolve
      * @param dy The y amount to resolve
      */
-    public void onResolve(float dx, float dy) {
+    public void onResolve(Entity e, float dx, float dy) {
         x += dx;
         y += dy;
     }
@@ -86,7 +90,6 @@ public class Entity extends Hitbox {
     /***********************
      * Getters and setters *
      ***********************/
-    public static Level getLevel() { return Game.getLevel(); }
     
     public final boolean isDead() { return !mAlive; }
     public final void kill() {
@@ -131,6 +134,10 @@ public class Entity extends Hitbox {
      * Various shortcuts *
      ***********************/
     
-    final static Backend getBackend() { return Game.getBackend(); }
-    final static Sprite loadSprite(String file) { return Game.getBackend().loadSprite(file); }
+    public final static Backend getBackend() { return Game.getBackend(); }
+    public final static Level getLevel() { return Game.getLevel(); }
+    public final static Random getRandom() { return Game.getRandom(); }
+    public final static Sprite loadSprite(String file) { return Game.getBackend().loadSprite(file); }
+    
+    public final static float lerp(float a, float b, float k) { return a * (1 - k) + b * k; }
 }

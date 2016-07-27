@@ -44,4 +44,7 @@ public class Hitbox {
                 other.cache_x_max > cache_x_min &&
                 other.cache_y_max > cache_y_min;
     }
+    
+    public final float getMiddleX() { return cache_x_min + width * .5f;  }
+    public final float getMiddleY() { return cache_y_min + height * .5f; }
 }

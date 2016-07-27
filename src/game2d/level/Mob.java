@@ -1,5 +1,6 @@
 package game2d.level;
 
+import game2d.level.particle.SimpleParticle;
 import game2d.Renderer;
 import game2d.Sprite;
 
@@ -46,6 +47,28 @@ public class Mob extends Entity {
             r.drawSprite(mCurrentSprite, cache_x_min, cache_y_min, width, height);
         else
             super.onDraw(r);
-        r.debugDraw(this);
+        
+        // r.debugDraw(this);
+    }
+    
+    public void onDamage(float damage, Entity caused_by) {
+        mHealth -= damage;
+        if(mHealth <= 0)
+            kill();
+        
+        //if(caused_by instanceof Particle)
+        Entity p = new SimpleParticle(
+                caused_by.x, caused_by.y, 
+                -caused_by.motion_x, -caused_by.motion_y, 
+                0xFF660000, 
+                1, 
+                1f);
+        p.width = lerp(.05f, .2f, getRandom().nextFloat());
+        p.height = lerp(.05f, .2f, getRandom().nextFloat());
+        p.offset_x = -p.width * .5f;
+        p.offset_y = -p.height * .5f;
+
+        p.setSpeed(1);
+        getLevel().add(p);
     }
 }

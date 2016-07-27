@@ -3,6 +3,7 @@ package game2d.level;
 import game2d.Game;
 import game2d.Renderer;
 import game2d.Sprite;
+import java.util.Random;
 
 public class Tile {
     public static final int
@@ -27,5 +28,6 @@ public class Tile {
     boolean hasFlags(int flags) { return (mFlags & flags) == flags; }
     boolean hasFlag(int flag)   { return (mFlags & flag) != 0; }
     
-    public static Level getLevel() { return Game.getLevel(); }
+    public final static Level getLevel() { return Game.getLevel(); }
+    public final static Random getRandom() { return Game.getRandom(); }
 }

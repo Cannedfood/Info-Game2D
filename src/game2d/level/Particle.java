@@ -10,6 +10,5 @@ public class Particle extends Entity {
     public Particle(float x, float y, float xm, float ym) {
         super(x, y, xm, ym);
         super.addFlags(FLAG_UNIMPORTANT);
-    }
-    
+    }   
 }
