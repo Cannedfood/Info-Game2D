@@ -26,34 +26,33 @@ public class Player extends Mob {
     }
     
     @Override
-    public void kill() {
-        if(!isDead()) {
-            Random r = new Random();
+    public boolean onKill() {
+        Random r = new Random();
             
-            for(int i = 0; i < width * height * 20; i++) {
-                final float min_size = 0.05f;
-                final float max_size = 0.4f;
-                final float speed = 10f;
+        for(int i = 0; i < width * height * 20; i++) {
+            final float min_size = 0.05f;
+            final float max_size = 0.4f;
+            final float speed = 10f;
                 
-                float angle = (float) (r.nextFloat() * Math.PI * 2);
+            float angle = (float) (r.nextFloat() * Math.PI * 2);
                 
-                float ex = cache_x_min + r.nextFloat() * width;
-                float ey = cache_y_min + r.nextFloat() * height;
+            float ex = cache_x_min + r.nextFloat() * width;
+            float ey = cache_y_min + r.nextFloat() * height;
+               
+            float rand_size = r.nextFloat();
+               
+            float size = min_size * (1 - rand_size) + max_size * rand_size;
+               
+            float sin = (float) Math.sin(angle) * speed;
+            float cos = (float) Math.cos(angle) * speed;
                 
-                float rand_size = r.nextFloat();
-                
-                float size = min_size * (1 - rand_size) + max_size * rand_size;
-                
-                float sin = (float) Math.sin(angle) * speed;
-                float cos = (float) Math.cos(angle) * speed;
-                
-                Entity p = new SimpleParticle(ex, ey, sin, cos, 0xFF880000, size, size);
-                p.setCollisionMask(Entity.MASK_GHOST);
-                p.weight = size * size * 100f;
-                getLevel().add(p);
-            }
-            super.kill();
+            Entity p = new SimpleParticle(ex, ey, sin, cos, 0xFF880000, size, size);
+            p.setCollisionMask(Entity.MASK_GHOST);
+            p.weight = size * size * 100f;
+            getLevel().add(p);
         }
+        
+        return true;
     }
     
     @Override

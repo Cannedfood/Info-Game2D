@@ -99,16 +99,16 @@ public class Level {
                         
                         float k = .5f; // TODO: respect mass
                         if(Math.abs(xd) < Math.abs(yd)) {
-                            e1.x += xd * k;
-                            e2.x -= xd * (1 - k);
+                            e1.onResolve(xd * k, 0);
+                            e2.onResolve(-xd * (1 - k), 0);
                             
                             float e1_motion_x = e1.motion_x;
                             e1.motion_x = e2.motion_x * .9f;
                             e2.motion_x = e1_motion_x * .9f;
                         }
                         else {
-                            e1.y += yd * k;
-                            e2.y -= yd * (1 - k);
+                            e1.onResolve(0, yd * k);
+                            e2.onResolve(0, -yd * (1 - k));
                             
                             float e1_motion_y = e1.motion_y;
                             e1.motion_y = e2.motion_y * .9f;
@@ -150,24 +150,22 @@ public class Level {
                 if(first_collision == null) break;
                 
                 
-                        float xp = cx - e.cache_x_max;
-                        float xn = cx + 1 - e.cache_x_min;
-                        float yp = cy - e.cache_y_max;
-                        float yn = cy + 1 - e.cache_y_min;
+                float xp = cx - e.cache_x_max;
+                float xn = cx + 1 - e.cache_x_min;
+                float yp = cy - e.cache_y_max;
+                float yn = cy + 1 - e.cache_y_min;
+                       
+                float xd = Math.abs(xp) < Math.abs(xn) ? xp : xn;
+                float yd = Math.abs(yp) < Math.abs(yn) ? yp : yn;
                         
-                        float xd = Math.abs(xp) < Math.abs(xn) ? xp : xn;
-                        float yd = Math.abs(yp) < Math.abs(yn) ? yp : yn;
-                        
-                        if(Math.abs(xd) < Math.abs(yd)) {
-                            e.x += xd;
-                            
-                            e.motion_x = 0;
-                        }
-                        else {
-                            e.y += yd;
-                            e.motion_y = 0;
-                        }
-                
+                if(Math.abs(xd) < Math.abs(yd)) {
+                    e.onResolve(xd, 0);
+                    e.motion_x = 0;
+                }
+                else {
+                    e.onResolve(0, yd);
+                    e.motion_y = 0;
+                }
                 
                 e.updateCache(e.x, e.y);
             }
@@ -289,10 +287,10 @@ public class Level {
         // TODO
     }
     
-    final Entity get(String name) { return mByName.get(name); }
+    final public Entity get(String name) { return mByName.get(name); }
     
-    /* Getters and setters */
     
+    /* Getters and setters */    
     public int getWidth()  { return mWidth; }
     public int getHeight() { return mHeight; }
     public ArrayList<Entity> getEntities() { return mEntities; }

@@ -66,15 +66,33 @@ public class Entity extends Hitbox {
         return true;
     }
     
+    /** Is called whenever a collision was resolved.
+     * @param dx The x amount to resolve
+     * @param dy The y amount to resolve
+     */
+    public void onResolve(float dx, float dy) {
+        x += dx;
+        y += dy;
+    }
+    
+    /** Is called just before the entity is killed.
+     * @return whether the entity should really be killed.
+     */
+    protected boolean onKill() {
+        return true;
+    }
+    
     
     /***********************
      * Getters and setters *
      ***********************/
     public static Level getLevel() { return Game.getLevel(); }
     
-    public boolean isDead() { return !mAlive; }
-    public void    kill()   { mAlive = false; }
-    
+    public final boolean isDead() { return !mAlive; }
+    public final void kill() {
+        if(mAlive && onKill())
+            mAlive = false;
+    }
     
     public final void    addFlags(int flags) { mFlags |= flags; }
     public final void    setFlags(int flags) { mFlags = flags; }

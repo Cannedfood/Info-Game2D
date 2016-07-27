@@ -19,48 +19,46 @@ public class Mine extends Entity {
     }
     
     @Override
-    public void kill() {
-        if(!isDead()) {
-            Random r = new Random();
+    public boolean onKill() {
+        Random r = new Random();
             
-            final float speed = 100f;
-            final float size = 0.1f;
-            final float weight = 1f;
+        final float speed = 100f;
+        final float size = 0.1f;
+        final float weight = 1f;
             
-            final float distance = 3f;
+        final float distance = 3f;
             
-            for(float b = 0; b < Math.PI * 2; b += (float)Math.PI / 500f) {
-                float rf = r.nextFloat();
-                float inv_rf = 1 - rf;
+        for(float b = 0; b < Math.PI * 2; b += (float)Math.PI / 500f) {
+            float rf = r.nextFloat();
+            float inv_rf = 1 - rf;
                 
-                float sin = (float)Math.sin(b);
-                float cos = (float)Math.cos(b);
-                float d = distance * rf;
+            float sin = (float)Math.sin(b);
+            float cos = (float)Math.cos(b);
+            float d = distance * rf;
                 
-                int r1 = 0xFF;
-                int r2 = 0x80;
-                int g1 = 0xAA;
-                int g2 = 0x80;
+            int r1 = 0xFF;
+            int r2 = 0x80;
+            int g1 = 0xAA;
+            int g2 = 0x80;
                 
-                int c = 0xFF000000 | 
-                        (int)(r1 * rf + inv_rf * r2) << 16 | 
-                        (int)(g1 * rf + inv_rf * g2) << 8;
+            int c = 0xFF000000 | 
+                    (int)(r1 * rf + inv_rf * r2) << 16 | 
+                    (int)(g1 * rf + inv_rf * g2) << 8;
                 
-                Entity e = new SimpleParticle(
-                        x + cos * d, y + sin * d, //< position
-                        cos * speed, sin * speed, //< motion
-                        c,               //< color
-                        size,
-                        weight
-                );
+            Entity e = new SimpleParticle(
+                    x + cos * d, y + sin * d, //< position
+                    cos * speed, sin * speed, //< motion
+                    c,               //< color
+                    size,
+                    weight
+            );
                 
-                e.setCollisionMask(Entity.MASK_PARTICLE | Entity.MASK_DEFAULT);
+            e.setCollisionMask(Entity.MASK_PARTICLE | Entity.MASK_DEFAULT);
                 
-                getLevel().add(e);
-            }
+            getLevel().add(e);
         }
         
-        super.kill();
+        return true;
     }
     
     @Override
