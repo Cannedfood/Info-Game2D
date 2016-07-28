@@ -62,7 +62,7 @@ public class Player extends Mob {
             final float max_size = 0.4f;
             final float speed = 10f;
                 
-            float angle = (float) (r.nextFloat() * Math.PI * 2);
+            float angle = r.nextFloat() * TWO_PI;
                 
             float ex = cache_x_min + r.nextFloat() * width;
             float ey = cache_y_min + r.nextFloat() * height;
@@ -71,8 +71,8 @@ public class Player extends Mob {
                
             float size = min_size * (1 - rand_size) + max_size * rand_size;
                
-            float sin = (float) Math.sin(angle) * speed;
-            float cos = (float) Math.cos(angle) * speed;
+            float sin = sin(angle) * speed;
+            float cos = cos(angle) * speed;
                 
             Entity p = new SimpleParticle(ex, ey, sin, cos, 0xFF880000, size, size);
             p.setCollisionMask(Entity.MASK_GHOST);
@@ -94,7 +94,7 @@ public class Player extends Mob {
         float dy = mInput.getValue("move.y");
         float dx = mInput.getValue("move.x");
         
-        if(dx * motion_x < 0 || Math.abs(dx) > Math.abs(motion_x)) {
+        if(dx * motion_x < 0 || abs(dx) > abs(motion_x)) {
             
             if(mOnGround)
                 motion_x = dx * 10;
@@ -142,7 +142,13 @@ public class Player extends Mob {
         if(e == null) // If colliding with the level
         {
             mOnGround = dy > 0;
-            mOnWall = Math.abs(dx) > 0;
+            mOnWall = abs(dx) > 0;
         }
+    }
+    
+    @Override
+    public void onDraw(Renderer r) {
+        if(mCurrentSprite != null)
+                r.drawSprite(mCurrentSprite, cache_x_min, cache_y_min + (mOnGround ? cos(cache_x_min * 3f) * .05f * height : 0f), width, height);
     }
 }

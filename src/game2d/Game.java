@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 /**
  * The class running everything
  */
-public class Game implements Runnable {
+public class Game extends GameMath implements Runnable {
     private static Random mLogicRandom = new Random();
     private static Level  LEVEL;
     private static Backend BACKEND;

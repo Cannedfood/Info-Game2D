@@ -1,11 +1,12 @@
 package game2d.level;
 
+import game2d.GameMath;
 import game2d.Renderer;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 /** A level, managing entities and tiles as well as their physics and rendering. */
-public class Level {
+public class Level extends GameMath {
     private final HashMap<String, Entity> mByName = new HashMap<>();
     private final ArrayList<Entity> mEntities = new ArrayList<>();
     
@@ -27,10 +28,13 @@ public class Level {
      */
     public void onDraw(Renderer r) {
         synchronized(mEntities) {
-            int minx = Math.max(0, (int)Math.floor(r.getCamera().cache_x_min));
-            int miny = Math.max(0, (int)Math.floor(r.getCamera().cache_y_min));
-            int maxx = Math.min(mWidth, (int)Math.ceil(r.getCamera().cache_x_max));
-            int maxy = Math.min(mHeight, (int)Math.ceil(r.getCamera().cache_y_max));
+            r.getCamera().updateCache(0, 0);
+            
+            int minx = max(0, floor_int(r.getCamera().cache_x_min));
+            int miny = max(0, floor_int(r.getCamera().cache_y_min));
+            int maxx = min(mWidth, ceil_int(r.getCamera().cache_x_max) + 1);
+            int maxy = min(mHeight, ceil_int(r.getCamera().cache_y_max) + 1);
+            System.out.println("Rendering: " + minx + " " + miny + " " + maxx + " " + maxy);
 
             for(int y = miny; y < maxy; y++) {
                 int precalc_y = y * mWidth;
@@ -102,13 +106,13 @@ public class Level {
                         float yp = e2.cache_y_min - e1.cache_y_max;
                         float yn = e2.cache_y_max - e1.cache_y_min;
                         
-                        float xd = Math.abs(xp) < Math.abs(xn) ? xp : xn;
-                        float yd = Math.abs(yp) < Math.abs(yn) ? yp : yn;
+                        float xd = absmin(xp, xn);
+                        float yd = absmin(yp, yn);
                         xd *= 1.1f;
                         yd *= 1.1f;
                         
                         float k = .5f; // TODO: respect mass
-                        if(Math.abs(xd) < Math.abs(yd)) {
+                        if(abs(xd) < abs(yd)) {
                             e1.x += xd * k;
                             e2.x -= xd * (1 - k);
                             e1.onResolve(e2, xd * k, 0);
@@ -139,10 +143,10 @@ public class Level {
         // Resolving collisions with level
         for(Entity e : mEntities) {
             for(int i = 0; i < 4; i++) { // TODO: optimize level collision
-                int minx = Math.max(0, (int)Math.floor(e.cache_x_min));
-                int miny = Math.max(0, (int)Math.floor(e.cache_y_min));
-                int maxx = Math.min(mWidth, (int)Math.ceil(e.cache_x_max));
-                int maxy = Math.min(mHeight, (int)Math.ceil(e.cache_y_max));
+                int minx = max(0, floor_int(e.cache_x_min));
+                int miny = max(0, floor_int(e.cache_y_min));
+                int maxx = min(mWidth, ceil_int(e.cache_x_max));
+                int maxy = min(mHeight, ceil_int(e.cache_y_max));
                 
                 Tile first_collision = null;
                 int cx = 0, cy = 0;
@@ -168,11 +172,11 @@ public class Level {
                 float xn = cx + 1 - e.cache_x_min;
                 float yp = cy - e.cache_y_max;
                 float yn = cy + 1 - e.cache_y_min;
-                       
-                float xd = Math.abs(xp) < Math.abs(xn) ? xp : xn;
-                float yd = Math.abs(yp) < Math.abs(yn) ? yp : yn;
+
+                float xd = absmin(xp, xn);
+                float yd = absmin(yp, yn);
                         
-                if(Math.abs(xd) < Math.abs(yd)) {
+                if(abs(xd) < abs(yd)) {
                     e.x += xd;
                     e.onResolve(null, xd, 0);
                     e.motion_x = 0;
@@ -271,10 +275,10 @@ public class Level {
     /** Fills a rectangle with tiles of a certain type.
      */
     public void setTiles(int x, int y, int w, int h, Tile t) {
-        w = Math.min(x + w, mWidth);
-        h = Math.min(y + h, mHeight);
-        x = Math.max(0, x);
-        y = Math.max(0, y);
+        w = min(x + w, mWidth);
+        h = min(y + h, mHeight);
+        x = max(0, x);
+        y = max(0, y);
         
         for(; y < h; ++y) {
             int ypre = y * mWidth;

@@ -91,7 +91,7 @@ public final class AwtBackend extends Backend implements MouseWheelListener, Mou
     
     private void updateCamCache() {
         /*cam_offx = cam_offy = 0;
-        cam_scalex = mCanvas.getWidth()  / 64f;
+        cam_scalex = mCanvas.getWidth()  / 128f;
         cam_scaley = mCanvas.getHeight() / 64f;*/
         cam_offx = -getCamera().offset_x;
         cam_offy = -getCamera().offset_y;
@@ -112,9 +112,9 @@ public final class AwtBackend extends Backend implements MouseWheelListener, Mou
     /* Utility functions to transform to camera space */
     int cx, cy, cw, ch;
     private void camSpace(float x, float y, float w, float h) {
-        cw = (int)Math.ceil(w * cam_scalex);
-        ch = (int)Math.ceil(h * cam_scaley);
-        cx = (int)Math.floor((x + cam_offx) * cam_scalex);
+        cw = ceil_int(w * cam_scalex);
+        ch = ceil_int(h * cam_scaley);
+        cx = floor_int((x + cam_offx) * cam_scalex);
         cy = mCanvas.getHeight() - (int)((y + cam_offy) * cam_scaley) - ch;
     }
 
@@ -124,7 +124,6 @@ public final class AwtBackend extends Backend implements MouseWheelListener, Mou
         BufferedImage img = ((AwtSprite)sprite).mImage;
         
         camSpace(x, y, w, h);
-        //mGraphics.drawImage(img, cx, cy, null);
         mGraphics.drawImage(img, cx, cy, cx + cw, cy + ch, 0, 0, img.getWidth(), img.getHeight(), null);
     }
     

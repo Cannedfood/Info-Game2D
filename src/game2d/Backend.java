@@ -5,7 +5,7 @@ import game2d.level.Hitbox;
 /**  An abstract platform dependent backend.
  * Implements the renderer and some other methods a backend must provide.
  */
-public abstract class Backend implements Renderer {
+public abstract class Backend extends GameMath implements Renderer {
     private final Input mInput = new Input();
     private final Hitbox mCamera = new Hitbox(0, 0, 64, 64);
     

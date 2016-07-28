@@ -1,11 +1,9 @@
 package game2d.game;
 
-import game2d.Game;
 import game2d.Renderer;
 import game2d.level.Entity;
 import game2d.level.Mob;
 import game2d.level.particle.DamagingParticle;
-import game2d.level.particle.SimpleParticle;
 import java.util.Random;
 
 public class Mine extends Entity {
@@ -22,20 +20,21 @@ public class Mine extends Entity {
     
     @Override
     public boolean onKill() {
-        Random r = getRandom();
+        final Random r = getRandom();
+        
         final float speed = 100f;
         final float size = 0.1f;
         final float mass = 1f;
-        final float damage = 0f;
+        final float damage = 0.05f;
             
         final float distance = 3f;
             
-        for(float b = 0; b < Math.PI * 2; b += (float)Math.PI / 500f) {
+        for(float b = 0; b < PI * 2; b += PI / 500) {
             float rf = r.nextFloat();
             float inv_rf = 1 - rf;
                 
-            float sin = (float)Math.sin(b);
-            float cos = (float)Math.cos(b);
+            float sin = sin(b);
+            float cos = cos(b);
             float d = distance * rf;
                 
             int r1 = 0xFF;
@@ -68,8 +67,6 @@ public class Mine extends Entity {
     public boolean onCollide(Entity other) {
         if(other instanceof Mob)
             kill();
-        
-        kill();
         
         return true;
     }

@@ -100,7 +100,7 @@ public class Entity extends Hitbox {
     
     /** Returns the magnitude of the motion vector. */
     public float getSpeed() {
-        return (float)Math.sqrt(motion_x * motion_x + motion_y * motion_y);
+        return sqrt(motion_x * motion_x + motion_y * motion_y);
     }
     
     /** Sets the speed while maintaining the direction.
@@ -130,6 +130,4 @@ public class Entity extends Hitbox {
     public final static Level getLevel() { return Game.getLevel(); }
     public final static Random getRandom() { return Game.getRandom(); }
     public final static Sprite loadSprite(String file) { return Game.getBackend().loadSprite(file); }
-    
-    public final static float lerp(float a, float b, float k) { return a * (1 - k) + b * k; }
 }

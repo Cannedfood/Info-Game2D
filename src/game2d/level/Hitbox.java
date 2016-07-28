@@ -1,6 +1,8 @@
 package game2d.level;
 
-public class Hitbox {
+import game2d.GameMath;
+
+public class Hitbox extends GameMath {
     public float offset_x, offset_y;
     public float width, height;
     

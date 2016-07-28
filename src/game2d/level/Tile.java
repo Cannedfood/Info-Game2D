@@ -1,11 +1,12 @@
 package game2d.level;
 
 import game2d.Game;
+import game2d.GameMath;
 import game2d.Renderer;
 import game2d.Sprite;
 import java.util.Random;
 
-public class Tile {
+public class Tile extends GameMath {
     public static final int
             FLAG_SOLID = 1; //!< Entities can collide with this tile 
     
