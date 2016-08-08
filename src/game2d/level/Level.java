@@ -27,24 +27,23 @@ public class Level extends GameMath {
      * @param r The rendering backend.
      */
     public void onDraw(Renderer r) {
-        synchronized(mEntities) {
-            r.getCamera().updateCache(0, 0);
+        r.getCamera().updateCache(0, 0);
             
-            int minx = max(0, floor_int(r.getCamera().cache_x_min));
-            int miny = max(0, floor_int(r.getCamera().cache_y_min));
-            int maxx = min(mWidth, ceil_int(r.getCamera().cache_x_max) + 1);
-            int maxy = min(mHeight, ceil_int(r.getCamera().cache_y_max) + 1);
-            System.out.println("Rendering: " + minx + " " + miny + " " + maxx + " " + maxy);
+        final int minx = max(0, floor_int(r.getCamera().cache_x_min));
+        final int miny = max(0, floor_int(r.getCamera().cache_y_min));
+        final int maxx = min(mWidth - 1, ceil_int(r.getCamera().cache_x_max));
+        final int maxy = min(mHeight - 1, ceil_int(r.getCamera().cache_y_max));
 
-            for(int y = miny; y < maxy; y++) {
-                int precalc_y = y * mWidth;
-                for(int x = minx; x < maxx; x++) {
-                    Tile t = mTiles[precalc_y + x];
-                    if(t != null)
-                        t.onDraw(r, x, y);
-                }
+        for(int y = miny; y <= maxy; y++) {
+            int precalc_y = y * mWidth;
+            for(int x = minx; x <= maxx; x++) {
+                Tile t = mTiles[precalc_y + x];
+                if(t != null)
+                    t.onDraw(r, x, y);
             }
-
+        }
+        
+        synchronized(mEntities) {
             for(int i = 0; i < mEntities.size(); ++i) {
                 Entity e = mEntities.get(i);
                 if(e.touches(r.getCamera()))
@@ -59,6 +58,8 @@ public class Level extends GameMath {
      */
     public void onUpdate(float dt) {
         // TODO: Make level collisions continuous
+        
+        synchronized(mEntities) {
         
         // Update all entities
         for(int i = 0; i < mEntities.size(); ++i) {
@@ -143,10 +144,10 @@ public class Level extends GameMath {
         // Resolving collisions with level
         for(Entity e : mEntities) {
             for(int i = 0; i < 4; i++) { // TODO: optimize level collision
-                int minx = max(0, floor_int(e.cache_x_min));
-                int miny = max(0, floor_int(e.cache_y_min));
-                int maxx = min(mWidth, ceil_int(e.cache_x_max));
-                int maxy = min(mHeight, ceil_int(e.cache_y_max));
+                final int minx = max(0, floor_int(e.cache_x_min));
+                final int miny = max(0, floor_int(e.cache_y_min));
+                final int maxx = min(mWidth, ceil_int(e.cache_x_max));
+                final int maxy = min(mHeight, ceil_int(e.cache_y_max));
                 
                 Tile first_collision = null;
                 int cx = 0, cy = 0;
@@ -213,6 +214,7 @@ public class Level extends GameMath {
                 e.onResolve(null, 0, mHeight - e.cache_y_max);
             }
         }
+        }
     }
     
     /** Adds an entity.
@@ -248,6 +250,46 @@ public class Level extends GameMath {
         return mTiles[indx];
     }
     
+    /** Traces the ray from { xbeg, ybeg } to { xdst, ydst }, ignoring entities
+     * @return the first solid tile it hits, or null if nothings in the way of the ray.
+     */
+    public Tile traceTile(float xbeg, float ybeg, float xdst, float ydst) {
+        // TODO
+        return null;
+    }
+    
+    /** Traces the ray from { xbeg, ybeg } to { xdst, ydst }, ignoring entities
+     * @return the first solid tile it hits, or null if nothings in the way of the ray.
+     */
+    public Tile traceOccluder(float xbeg, float ybeg, float xdst, float ydst) {
+        // TODO
+        return null;
+    }
+    
+    /** Traces the ray from { xbeg, ybeg } to { xdst, ydst }, ignoring entities
+     * @return the first solid tile it hits, or null if nothings in the way of the ray.
+     */
+    public Tile traceEntity(float xbeg, float ybeg, float xdst, float ydst) {
+        // TODO
+        return null;
+    }
+    
+    /** Traces the ray from { xbeg, ybeg } to { xdst, ydst }
+     * @return the first solid tile it hits, the 
+     */
+    public Object traceRay(float xbeg, float ybeg, float xdst, float ydst) {
+        // TODO
+        return null;
+    }
+    
+    /** Traces the ray from { xbeg, ybeg } to { xdst, ydst }
+     * @return the first solid tile or entity it hits, independend of the occluder flag.
+     */
+    public Object traceAny(float xbeg, float ybeg, float xdst, float ydst) {
+        // TODO
+        return null;
+    }
+    
     /** Gets a tile below a specific coordinate.
      * @param x The x coordinate of the Tile
      * @param y The y coordinate of the Tile
@@ -255,15 +297,27 @@ public class Level extends GameMath {
      */
     public void setTile(float x, float y, Tile t) { setTile((int)x, (int)y, t); }
     /** Gets a tile at a specific coordinate.
-     * @param x The x coordinate of the Tile
-     * @param y The y coordinate of the Tile
+     * @param dx The x coordinate of the Tile
+     * @param dy The y coordinate of the Tile
      * @param t The tile to be set to
      */
-    public void setTile(int x, int y, Tile t) {
-        int indx = x + y * mWidth;
-        /*if(indx < 0 || indx > mTiles.length)
-            return;*/
-        mTiles[indx] = t;
+    public void setTile(int dx, int dy, Tile t) {
+        mTiles[dx + dy * mWidth] = t;
+        
+        int minx = max(dx - 2, 0);
+        int maxx = min(dx + 2, mWidth - 1);
+        int miny = max(dy - 2, 0);
+        int maxy = min(dy + 2, mHeight - 1);
+        
+        for(int y = miny; y <= maxy; y++) {
+            int ypre = y * mWidth;
+            
+            for(int x = minx; x <= maxx; x++) {
+                Tile tl = mTiles[ypre + x];
+                if(tl != null)
+                    tl.onTileUpdate(dx, dy, x, y);
+            }
+        }
     }
     
     /** Fills a rectangle with tiles of a certain type.
@@ -289,14 +343,13 @@ public class Level extends GameMath {
     }
     
     /**
-     * @param <CEntity>
      * @param spread
      * @param speed
      * @param angle_min
      * @param angle_max
      * @param sample
      */
-    public <CEntity> void explode(float spread, float speed, float angle_min, float angle_max, Entity sample) {
+    public void explode(float spread, float speed, float angle_min, float angle_max, EntityFactory sample) {
         // TODO
     }
     

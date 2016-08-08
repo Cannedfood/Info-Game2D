@@ -21,7 +21,7 @@ public class Main {
             Logger.getLogger(Game.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         
-        //*
+        /*
         while(true) {
             try {
                 Thread.sleep(200);

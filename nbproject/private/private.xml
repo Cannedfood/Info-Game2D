@@ -2,16 +2,6 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group>
-            <file>file:/home/benno/dev/Game2D/src/game2d/level/Level.java</file>
-            <file>file:/home/benno/dev/Game2D/src/game2d/backend/AwtBackend.java</file>
-            <file>file:/home/benno/dev/Game2D/src/game2d/level/Player.java</file>
-            <file>file:/home/benno/dev/Game2D/src/game2d/MathUtils.java</file>
-            <file>file:/home/benno/dev/Game2D/src/game2d/level/Hitbox.java</file>
-            <file>file:/home/benno/dev/Game2D/src/game2d/level/Entity.java</file>
-            <file>file:/home/benno/dev/Game2D/src/game2d/game/GameProject.java</file>
-            <file>file:/home/benno/dev/Game2D/src/game2d/level/Mob.java</file>
-            <file>file:/home/benno/dev/Game2D/src/game2d/game/Mine.java</file>
-        </group>
+        <group/>
     </open-files>
 </project-private>

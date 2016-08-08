@@ -8,7 +8,8 @@ import java.util.Random;
 
 public class Entity extends Hitbox {
     public static final int 
-            FLAG_UNIMPORTANT = 0x1; //!< Allows the level to remove this entity for performance reasons (mostly for particles)
+            FLAG_UNIMPORTANT = 0x1, //!< Allows the level to remove this entity for performance reasons (mostly for particles)
+            FLAG_OCCLUDER = 0x2; //!< This entity will occlude rays
     
     public static final int
             MASK_GHOST        = 0x0,
@@ -52,8 +53,11 @@ public class Entity extends Hitbox {
     
     public void onPostUpdate(float dt) {}
     
-    public void onDraw(Renderer b) {
-        b.drawRect(0xFFFF00FF, this);
+    public void onDraw(Renderer b) { b.drawRect(0xFFFF00FF, this); }
+    
+    /** Returns true if the ray hits this object */
+    public boolean onRay(float nx, float ny, float startx, float starty, float endx, float endy) {
+        return true;
     }
     
     /** Is called every time this entity collides with another entity.

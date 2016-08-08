@@ -6,8 +6,8 @@ import game2d.level.Tile;
 
 public class BlackTile extends Tile {
     
-    public BlackTile(Sprite sprite, int flags) {
-        super(sprite, flags);
+    public BlackTile(int flags) {
+        super(flags);
     }
     
     @Override

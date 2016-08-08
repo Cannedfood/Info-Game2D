@@ -5,7 +5,6 @@ import game2d.Renderer;
 import game2d.level.Entity;
 import game2d.level.LevelLoader;
 import game2d.level.Player;
-import game2d.level.Tile;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -40,33 +39,11 @@ public class GameProject extends Game {
     private void reset() {
         getLevel().getEntities().clear();
         
-        // Create a checkerboard patters of tiles
-        Tile t;
-        
-        t = new WhiteTile(null, 0);
-        for(int y = 0; y < getLevel().getHeight(); ++y) {
-            for(int x = y % 2; x < getLevel().getWidth(); x += 2) {
-                getLevel().setTile(x, y, t);
-            }
-        }
-        
-        t = new BlackTile(null, 0);
-        for(int y = 0; y < getLevel().getHeight(); ++y) {
-            for(int x = (y + 1) % 2; x < getLevel().getWidth(); x += 2) {
-                getLevel().setTile(x, y, t);
-            }
-        }
-        
-        t = new SolidTile();
-        for(int i = 0; i < getLevel().getWidth(); ++i) {
-            getLevel().setTile(i, i, t);
-        }
-        
         LevelLoader ll = new LevelLoader();
         
-        ll.setTile(0xFFFFFFFF, new WhiteTile(null, 0));
-        ll.setTile(0xFF000000, new BlackTile(null, 0));
-        ll.setTile(0xFFFF0000, new SolidTile());
+        ll.setTile(0xFFFFFFFF, new WhiteTile(0));
+        ll.setTile(0xFF000000, new BlackTile(0));
+        ll.setTile(0xFFFF0000, () -> new SolidTile());
         
         loadLevel(ll, getBackend().loadSprite("level/demo.png"));
         
@@ -76,7 +53,7 @@ public class GameProject extends Game {
         
         // Add mine thingy
         Entity e = new Mine(10, getLevel().getHeight() - 1);
-        e.weight = .05f;
+        e.weight = .4f;
         getLevel().add(e);
         
         /*if(bg_music == null)

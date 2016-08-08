@@ -10,12 +10,12 @@ public class Mine extends Entity {
     
     public Mine(float x, float y) {
         super(x, y);
-        weight = 1.f;
+        weight = 4.f;
     }
     
     public Mine(float x, float y, float xm, float ym) {
         super(x, y, xm, ym);
-        weight = 1.f;
+        weight = 4.f;
     }
     
     @Override
@@ -25,10 +25,10 @@ public class Mine extends Entity {
         final float speed = 100f;
         final float size = 0.1f;
         final float mass = 1f;
-        final float damage = 0.05f;
+        final float damage = 0.0f;
             
         final float distance = 3f;
-            
+        
         for(float b = 0; b < PI * 2; b += PI / 500) {
             float rf = r.nextFloat();
             float inv_rf = 1 - rf;

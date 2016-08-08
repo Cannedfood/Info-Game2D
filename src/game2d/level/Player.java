@@ -1,12 +1,14 @@
 package game2d.level;
 
-import game2d.level.particle.SimpleParticle;
 import game2d.Input;
 import game2d.Renderer;
 import game2d.Sprite;
+import game2d.game.BloodParticle;
 import java.util.Random;
 
 public class Player extends Mob {
+    private static final float WALL_JMP_COOLDOWN = 1;
+    
     Sprite mSpriteJumpL;
     Sprite mSpriteJumpR;
     Sprite mSpriteStandL;
@@ -15,7 +17,8 @@ public class Player extends Mob {
     private Input mInput;
     
     private boolean mOnGround = false;
-    private boolean mOnWall   = false;
+    private int     mOnWall   = 0;
+    private float   mWallJumpCooldown = 0;
     
     public Player(float x, float y, Input input) {
         super(x, y);
@@ -63,7 +66,7 @@ public class Player extends Mob {
             final float speed = 10f;
                 
             float angle = r.nextFloat() * TWO_PI;
-                
+            
             float ex = cache_x_min + r.nextFloat() * width;
             float ey = cache_y_min + r.nextFloat() * height;
                
@@ -74,8 +77,8 @@ public class Player extends Mob {
             float sin = sin(angle) * speed;
             float cos = cos(angle) * speed;
                 
-            Entity p = new SimpleParticle(ex, ey, sin, cos, 0xFF880000, size, size);
-            p.setCollisionMask(Entity.MASK_GHOST);
+            Entity p = new BloodParticle(ex, ey, sin, cos, size, .5f);
+            p.setCollisionMask(Entity.MASK_DEFAULT);
             p.weight = size * size * 100f;
             getLevel().add(p);
         }
@@ -85,43 +88,47 @@ public class Player extends Mob {
     
     @Override
     public void onUpdate(float dt) {
+        mWallJumpCooldown -= dt;
+        
         if(mInput.is("pointer.down")) {
-            float mx = mInput.getValue("pointer.x") - x;
+            /*float mx = mInput.getValue("pointer.x") - x;
             float my = mInput.getValue("pointer.y") - y;
-            accelerate(mx * .1f, my * .1f);
+            accelerate(mx * .1f, my * .1f);*/
+            
+            x = mInput.getValue("pointer.x");
+            y = mInput.getValue("pointer.y");
+            motion_x = motion_y = 0;
         }
         
         float dy = mInput.getValue("move.y");
         float dx = mInput.getValue("move.x");
         
-        if(dx * motion_x < 0 || abs(dx) > abs(motion_x)) {
-            
+        if(mWallJumpCooldown <= 0 && dx * motion_x < 0 || abs(dx) > abs(motion_x)) {
             if(mOnGround)
                 motion_x = dx * 10;
             else
                 motion_x += dx;
         }
         
-        if(mOnGround && dy > 0) {
-            mOnGround = false;
-            
+        if(mOnWall != 0)
+            motion_y = clamp(motion_y, -.5f, .5f);
+        
+        if(mOnGround && dy > 0)
             motion_y = dy * 10 * weight;
-        }
-        else if(!mOnGround && mOnWall && dy != 0) {
-            mOnWall = false;
-            
+        else if(!mOnGround && mOnWall != 0 && dy != 0) {
+            mWallJumpCooldown = WALL_JMP_COOLDOWN;
             if(dy > 0)
                 motion_y = dy * 8 * weight;
             else
                 motion_y = weight != 0 ? dy * 8 / weight : 0;
             
-            if(motion_x > 0)
-                motion_x = -20;
-            else
+            if(mOnWall > 0)
                 motion_x = 20;
+            else
+                motion_x = -20;
         }
         
-        if(!mOnGround && !mOnWall)
+        if(!mOnGround && mOnWall == 0)
             selectJumpingSprites();
         else
             selectStandingSprites();
@@ -132,7 +139,7 @@ public class Player extends Mob {
     @Override
     public void onPostUpdate(float dt) {
         mOnGround = false;
-        mOnWall = false;
+        mOnWall = 0;
     }
     
     @Override
@@ -142,7 +149,7 @@ public class Player extends Mob {
         if(e == null) // If colliding with the level
         {
             mOnGround = dy > 0;
-            mOnWall = abs(dx) > 0;
+            mOnWall = dx == 0 ? 0 : (dx < 0 ? -1 : 1);
         }
     }
     

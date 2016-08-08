@@ -1,10 +1,10 @@
 package game2d.level;
 
-import game2d.level.particle.SimpleParticle;
 import game2d.Renderer;
 import game2d.Sprite;
+import game2d.game.BloodParticle;
 
-public class Mob extends Entity {
+public class Mob extends Entity implements Damagable {
     protected float mMaxHealth = 1.0f;
     protected float mHealth    = 0.1f;
     protected float mRegen     = 0.05f;
@@ -51,24 +51,26 @@ public class Mob extends Entity {
         // r.debugDraw(this);
     }
     
-    public void onDamage(float damage, Entity caused_by) {
+    @Override
+    public void onDamage(Entity caused_by, String kind, float damage) {
         mHealth -= damage;
         if(mHealth <= 0)
             kill();
         
         //if(caused_by instanceof Particle)
-        Entity p = new SimpleParticle(
+        Entity p = new BloodParticle(
                 caused_by.x, caused_by.y, 
                 -caused_by.motion_x, -caused_by.motion_y, 
-                0xFF660000, 
-                1, 
+                lerp(.1f, .3f, getRandom().nextFloat()), 
                 1f);
-        p.width = lerp(.05f, .2f, getRandom().nextFloat());
-        p.height = lerp(.05f, .2f, getRandom().nextFloat());
+        
         p.offset_x = -p.width * .5f;
         p.offset_y = -p.height * .5f;
 
         p.setSpeed(1);
+        
+        p.setCollisionMask(MASK_DEFAULT);
+        
         getLevel().add(p);
     }
 }

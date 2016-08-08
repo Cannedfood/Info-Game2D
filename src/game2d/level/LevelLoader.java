@@ -1,11 +1,8 @@
 package game2d.level;
 
+import game2d.level.tile.TileFactory;
 import game2d.Sprite;
 import java.util.HashMap;
-
-interface TileFactory {
-    Tile create();
-}
 
 public class LevelLoader {
     private HashMap<Integer, TileFactory> mTileFactories = new HashMap<>();

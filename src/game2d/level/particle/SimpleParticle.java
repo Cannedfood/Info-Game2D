@@ -12,8 +12,8 @@ public class SimpleParticle extends Entity {
         setCollisionMask(MASK_PARTICLE);
         addFlags(FLAG_UNIMPORTANT);
         setHitbox(size, size);
-        mColor = color;
         this.weight = weight;
+        mColor = color;
     }
     
     @Override

@@ -5,6 +5,8 @@
  */
 package game2d;
 
+import java.awt.event.MouseWheelEvent;
+
 /**
  * A class which is partially a wrapper around the class Math, but provides extra methods
  */
@@ -88,6 +90,15 @@ public abstract class GameMath {
     /** @return the absolute value of i (equal to the distance from 0) */
     public static final int   abs(int i)   { return Math.abs(i); }
     
+    /* For stepped integration */
+    
+    public static final float integrated_lerp(float dt, float a, float b, float k) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+    
+    public static final float integrated_scale(float dt, float a, float scale) {
+        return a + a * (scale - 1) * dt;
+    }
     
     /* Constants */
     

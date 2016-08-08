@@ -90,9 +90,11 @@ public final class AwtBackend extends Backend implements MouseWheelListener, Mou
     float cam_offy, cam_scaley;
     
     private void updateCamCache() {
-        /*cam_offx = cam_offy = 0;
+        /*
+        cam_offx = cam_offy = 0;
         cam_scalex = mCanvas.getWidth()  / 128f;
-        cam_scaley = mCanvas.getHeight() / 64f;*/
+        cam_scaley = mCanvas.getHeight() / 64f;
+        */
         cam_offx = -getCamera().offset_x;
         cam_offy = -getCamera().offset_y;
         cam_scalex = mCanvas.getWidth() / getCamera().width;
@@ -136,7 +138,7 @@ public final class AwtBackend extends Backend implements MouseWheelListener, Mou
     
     @Override
     public void drawRect(int color, float x, float y, float w, float h) {
-        if(color != last_color)
+        //if(color != last_color)
             mGraphics.setColor(new Color(last_color = color)); //< Horrible!! DO NOT create new Objects while rendering!!
         
         camSpace(x, y, w, h);
@@ -165,6 +167,7 @@ public final class AwtBackend extends Backend implements MouseWheelListener, Mou
         mCanvas.getBufferStrategy().show();
         mGraphics.setColor(Color.BLACK);
         mGraphics.fillRect(0, 0, mCanvas.getWidth(), mCanvas.getHeight());
+        last_color = 0x00FF00FF;
     }
 
     /* Methods from Loader */
@@ -200,7 +203,7 @@ public final class AwtBackend extends Backend implements MouseWheelListener, Mou
     
     @Override
     public void postUpdate(Game g, float dt) {
-        g.onRender();//<< This code renders after each update
+        //g.onRender();//<< This code renders after each update
     }
     
     @Override
