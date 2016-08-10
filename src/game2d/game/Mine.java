@@ -1,21 +1,28 @@
 package game2d.game;
 
 import game2d.Renderer;
+import game2d.Sprite;
 import game2d.level.Entity;
 import game2d.level.Mob;
 import game2d.level.particle.DamagingParticle;
 import java.util.Random;
 
 public class Mine extends Entity {
+    private Sprite mSprite;
     
     public Mine(float x, float y) {
         super(x, y);
-        weight = 4.f;
+        init();
     }
     
     public Mine(float x, float y, float xm, float ym) {
         super(x, y, xm, ym);
+        init();
+    }
+    
+    private void init() {
         weight = 4.f;
+        mSprite = loadSprite("sprite/mine.png");
     }
     
     @Override
@@ -73,6 +80,6 @@ public class Mine extends Entity {
     
     @Override
     public void onDraw(Renderer r) {
-        r.drawRect(0xFFBB2222, cache_x_min, cache_y_min, width, height);
+        r.drawSprite(mSprite, cache_x_min, cache_y_min - .2f * height, width, height);
     }
 }
