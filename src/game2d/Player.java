@@ -3,7 +3,6 @@ package game2d;
 import engine2d.Input;
 import engine2d.Renderer;
 import engine2d.Sprite;
-import game2d.BloodParticle;
 import engine2d.level.Entity;
 import engine2d.level.Mob;
 import java.util.Random;
@@ -16,7 +15,7 @@ public class Player extends Mob {
     Sprite mSpriteStandL;
     Sprite mSpriteStandR;
     
-    private Input mInput;
+    private final Input mInput;
     
     private boolean mOnGround = false;
     private int     mOnWall   = 0;
@@ -34,7 +33,7 @@ public class Player extends Mob {
         init();
     }
     
-    private final void init() {
+    private void init() {
         setHitbox(2, 2);
         weight = 4.f;
         
@@ -92,7 +91,7 @@ public class Player extends Mob {
     public void onUpdate(float dt) {
         mWallJumpCooldown -= dt;
         
-        if(mInput.is("pointer.down")) {
+        if(mInput.poll("pointer.down")) {
             /*float mx = mInput.getValue("pointer.x") - x;
             float my = mInput.getValue("pointer.y") - y;
             accelerate(mx * .1f, my * .1f);*/

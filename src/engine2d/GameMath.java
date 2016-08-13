@@ -11,6 +11,19 @@ import java.awt.event.MouseWheelEvent;
  * A class which is partially a wrapper around the class Math, but provides extra methods
  */
 public abstract class GameMath {
+    /* Constants */
+    
+    public static final float PI = (float) Math.PI;
+    public static final float TWO_PI = (float) Math.PI;
+    public static final float ONE_OVER_PI = (float) (1 / Math.PI);
+    public static final float ONE_OVER_TWO_PI = (float) (1 / (Math.PI * 2));
+    
+    public static final float E  = (float ) Math.E;
+    
+    public static final float INFINITY = 1 / 0f; //< Not my opinion, just how floats work
+    public static final float NEGATIVE_INFINITY = 1 / 0f;
+    public static final float NAN = 0 / 0f;
+    
     /* Interpolation */
     
     public static final float lerp(float a, float b, float k) { return a * (1 - k) + b * k; }
@@ -58,6 +71,14 @@ public abstract class GameMath {
     public static final float atan2(float x, float y) { return (float) Math.atan2(x, y); }
     
     
+    /** @return converts degrees to radians */
+    public static final float degrees(float degrees) { return (degrees / 180) * PI; }
+    /** @return converts radians to degrees */
+    public static final float to_degrees(float rads) { return (rads / PI) * 180; }
+    /** @return just the input value, this is just to clarify a value is in radians */
+    public static final float radians(float rads) { return rads; }
+    
+    
     /* General math */
     
     /** @return base raised to the power of exponent */
@@ -90,6 +111,10 @@ public abstract class GameMath {
     /** @return the absolute value of i (equal to the distance from 0) */
     public static final int   abs(int i)   { return Math.abs(i); }
     
+    public static final float signof(float f) { return Math.copySign(1, f); }
+    public static final float signof(float f, float to) { return Math.copySign(to, f); }
+    
+    
     /* For stepped integration */
     
     public static final float integrated_lerp(float dt, float a, float b, float k) {
@@ -99,13 +124,4 @@ public abstract class GameMath {
     public static final float integrated_scale(float dt, float a, float scale) {
         return a + a * (scale - 1) * dt;
     }
-    
-    /* Constants */
-    
-    public static final float PI = (float) Math.PI;
-    public static final float TWO_PI = (float) Math.PI;
-    public static final float ONE_OVER_PI = (float) (1 / Math.PI);
-    public static final float ONE_OVER_TWO_PI = (float) (1 / (Math.PI * 2));
-    
-    public static final float E  = (float ) Math.E;
 }

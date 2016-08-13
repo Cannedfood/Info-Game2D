@@ -13,22 +13,23 @@ import engine2d.level.Tile;
  * @author benno
  */
 public class ProxyTile extends Tile {
+
     private Tile mFwdTo;
 
     public ProxyTile(Tile owner) {
         super(owner.getFlags());
     }
-    
+
     @Override
     public boolean onDestroy(int mode, int x, int y) {
         return mFwdTo.onDestroy(mode, x, y);
     }
-    
+
     @Override
     public void onTileUpdate(int x, int y) {
         mFwdTo.onTileUpdate(x, y);
     }
-    
+
     @Override
     public boolean onTouch(Entity e, int x, int y) {
         return mFwdTo.onTouch(e, x, y);

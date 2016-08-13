@@ -28,6 +28,7 @@ public class Tile extends GameMath {
     public boolean onDestroy(int mode, int x, int y) { return true; }
     public void    onTileUpdate(int x, int y) {}
     public boolean onTouch(Entity e, int x, int y) { return true; }
+    public void    onDamage(Entity e, float amount) {}
     
     public final boolean hasFlags(int flags) { return (mFlags & flags) == flags; }
     public final boolean hasFlag(int flag)   { return (mFlags & flag) != 0; }

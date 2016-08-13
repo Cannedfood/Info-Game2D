@@ -19,7 +19,12 @@ public class DamagingParticle extends FluidParticle {
             kill();
         }
         
-        return true;
+        return false;
+    }
+    
+    @Override
+    public void onResolve(Entity e, float x, float y) {
+        kill();
     }
     
     @Override

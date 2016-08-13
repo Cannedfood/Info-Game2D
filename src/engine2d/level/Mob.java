@@ -57,17 +57,20 @@ public class Mob extends Entity implements Damagable {
         if(mHealth <= 0)
             kill();
         
+        float mx = signof(caused_by.motion_x, sqrt(abs(caused_by.motion_x)) * .5f);
+        float my = signof(caused_by.motion_y, sqrt(abs(caused_by.motion_y)) * .5f);
+        
         //if(caused_by instanceof Particle)
         Entity p = new BloodParticle(
                 caused_by.x, caused_by.y, 
-                -caused_by.motion_x, -caused_by.motion_y, 
+                mx, my, 
                 lerp(.1f, .3f, getRandom().nextFloat()), 
                 1f);
         
         p.offset_x = -p.width * .5f;
         p.offset_y = -p.height * .5f;
 
-        p.setSpeed(1);
+        //p.setSpeed(1);
         
         p.setCollisionMask(MASK_DEFAULT);
         

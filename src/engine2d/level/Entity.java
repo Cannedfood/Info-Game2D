@@ -18,6 +18,8 @@ public class Entity extends Hitbox {
     
     /** Mass / Influence of gravity */
     public float weight = 0;
+    /** Multiply speed by this when colliding */
+    public float friction_mulitplier = 0.99f;
     /** x and y position in the world */
     public float x = 0, y = 0;
     /** Motion along the x and y axis */
@@ -124,6 +126,12 @@ public class Entity extends Hitbox {
     public void accelerate(float ax, float ay) {
         motion_x += ax;
         motion_y += ay;
+    }
+    
+    public final float getSurfaceDistance(float px, float py) {
+        float xx = clamp(px, cache_x_min, cache_x_max);
+        float yy = clamp(py, cache_y_min, cache_y_max);
+        return length(xx - px, yy - py);
     }
     
     /***********************

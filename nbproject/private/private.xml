@@ -4,11 +4,12 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/home/benno/dev/Game2D/src/engine2d/level/tile/ProxyTile.java</file>
-            <file>file:/home/benno/dev/Game2D/src/game2d/SolidTile.java</file>
+            <file>file:/home/benno/dev/Game2D/src/game2d/Enemy.java</file>
             <file>file:/home/benno/dev/Game2D/src/engine2d/level/Level.java</file>
             <file>file:/home/benno/dev/Game2D/src/engine2d/level/LevelLoader.java</file>
             <file>file:/home/benno/dev/Game2D/src/game2d/GameProject.java</file>
             <file>file:/home/benno/dev/Game2D/src/engine2d/Game.java</file>
+            <file>file:/home/benno/dev/Game2D/src/engine2d/GameMath.java</file>
         </group>
     </open-files>
 </project-private>

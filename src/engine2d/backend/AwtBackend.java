@@ -165,7 +165,7 @@ public final class AwtBackend extends Backend implements MouseWheelListener, Mou
     @Override
     public void flush() {
         mCanvas.getBufferStrategy().show();
-        mGraphics.setColor(Color.BLACK);
+        mGraphics.setColor(Color.DARK_GRAY);
         mGraphics.fillRect(0, 0, mCanvas.getWidth(), mCanvas.getHeight());
         last_color = 0x00FF00FF;
     }

@@ -41,7 +41,7 @@ public class GameProject extends Game {
         LevelLoader ll = new LevelLoader();
         
         ll.setTile(0xFFFFFFFF, new WhiteTile(0));
-        ll.setTile(0xFF000000, new BlackTile(0));
+        ll.setTile(0xFF000000, new DarkTile(0));
         ll.setTile(0xFFFF0000, () -> new SolidTile());
         
         loadLevel(ll, getBackend().loadSprite("level/demo.png"));
@@ -51,7 +51,7 @@ public class GameProject extends Game {
         getLevel().add(mPlayer);
         
         // Add mine thingy
-        Entity e = new Mine(10, getLevel().getHeight() - 1);
+        Entity e = new Mine(10, 10);
         e.weight = .4f;
         getLevel().add(e);
         

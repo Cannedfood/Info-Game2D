@@ -33,15 +33,15 @@ public class SolidTile extends Tile {
         
         mSpriteIndex = 0;
         
-        t = getLevel().probeTile(x, y + 1);
+        t = getLevel().sampleTile(x, y + 1);
         if(t != null && !t.hasFlag(Tile.SOLID))
             mSpriteIndex |= BIT_TOP;
         
-        t = getLevel().probeTile(x + 1, y);
+        t = getLevel().sampleTile(x + 1, y);
         if(t != null && !t.hasFlag(Tile.SOLID))
             mSpriteIndex |= BIT_RIGHT;
         
-        t = getLevel().probeTile(x - 1, y);
+        t = getLevel().sampleTile(x - 1, y);
         if(t != null && !t.hasFlag(Tile.SOLID))
             mSpriteIndex |= BIT_LEFT;
     }

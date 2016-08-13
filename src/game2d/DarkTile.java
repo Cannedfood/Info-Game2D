@@ -1,12 +1,11 @@
 package game2d;
 
 import engine2d.Renderer;
-import engine2d.Sprite;
 import engine2d.level.Tile;
 
-public class BlackTile extends Tile {
+public class DarkTile extends Tile {
     
-    public BlackTile(int flags) {
+    public DarkTile(int flags) {
         super(flags);
     }
     

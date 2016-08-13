@@ -65,8 +65,8 @@ public class BloodParticle extends FluidParticle {
         if(e instanceof Mob) {
             if(mTouchCooldown < 0) {
                 mTouchCooldown = COOLDOWN;
-                y += .3f;
-                motion_y += 10f;
+                y += .3f * -e.motion_y;
+                motion_y += 10f * -e.motion_y;
                 motion_x += getRandom().nextFloat() - .5f;
             }
             else
