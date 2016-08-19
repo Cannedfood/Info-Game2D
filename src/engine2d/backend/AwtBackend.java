@@ -76,6 +76,13 @@ public final class AwtBackend extends Backend implements MouseWheelListener, Mou
         getInput().add("move.y", 0);
         getInput().add("reset", 0);
         
+        getInput().add("debug1", 0);
+        getInput().add("debug2", 0);
+        getInput().add("debug3", 0);
+        getInput().add("debug4", 0);
+        getInput().add("debug5", 0);
+        getInput().add("debug6", 0);
+        
         mCanvas.addMouseMotionListener(this);
         mCanvas.addMouseWheelListener(this);
         mCanvas.addMouseListener(this);
@@ -94,11 +101,12 @@ public final class AwtBackend extends Backend implements MouseWheelListener, Mou
         cam_offx = cam_offy = 0;
         cam_scalex = mCanvas.getWidth()  / 128f;
         cam_scaley = mCanvas.getHeight() / 64f;
-        */
+        /*/
         cam_offx = -getCamera().offset_x;
         cam_offy = -getCamera().offset_y;
         cam_scalex = mCanvas.getWidth() / getCamera().width;
         cam_scaley = mCanvas.getHeight() / getCamera().height;
+        //*/
     }
     
     @Override
@@ -118,6 +126,11 @@ public final class AwtBackend extends Backend implements MouseWheelListener, Mou
         ch = ceil_int(h * cam_scaley);
         cx = floor_int((x + cam_offx) * cam_scalex);
         cy = mCanvas.getHeight() - (int)((y + cam_offy) * cam_scaley) - ch;
+    }
+    
+    private void camSpace(float x, float y) {
+        cx = floor_int((x + cam_offx) * cam_scalex);
+        cy = mCanvas.getHeight() - (int)((y + cam_offy) * cam_scaley);
     }
 
     /* Methods from Renderer */
@@ -151,10 +164,26 @@ public final class AwtBackend extends Backend implements MouseWheelListener, Mou
     }
     
     @Override
+    public void drawLine(int color, float xbeg, float ybeg, float xend, float yend) {
+        mGraphics.setColor(new Color(last_color = color)); //< Horrible!! DO NOT create new Objects while rendering!!
+        camSpace(xbeg, ybeg);
+        int x = cx, y = cy;
+        camSpace(xend, yend);
+        mGraphics.drawLine(x, y, cx, cy);
+    }
+    
+    @Override
     public void debugDraw(Hitbox h) {
-        camSpace(h.cache_x_min, h.cache_y_min, h.width, h.height);
         mGraphics.setColor(Color.RED);
+        
+        camSpace(h.cache_x_min, h.cache_y_min, h.width, h.height);
         mGraphics.drawRect(cx, cy, cw, ch);
+        
+        camSpace(h.getCachePositionX(), h.getCachePositionY());
+        mGraphics.drawOval(cx - 3, cy - 3, 7, 7);
+        
+        camSpace(h.getMiddleX(), h.getMiddleY());
+        mGraphics.drawOval(cx - 1, cy - 1, 3, 3);
     }
 
     @Override
@@ -174,13 +203,18 @@ public final class AwtBackend extends Backend implements MouseWheelListener, Mou
     HashMap<String, AwtSprite> mSprites = new HashMap<>();
     
     @Override
+    public void startTiles() {}
+    @Override
+    public void startRandom() {}   
+    
+    @Override
     public Sprite loadSprite(String file) {
         AwtSprite re = mSprites.get(file);
         
         if(re == null) {
             BufferedImage bi = null;
          
-           try {
+            try {
                 bi = ImageIO.read(new File("./ressource/" + file));
             } catch (IOException ex) {
                 Logger.getLogger(AwtBackend.class.getName()).log(Level.SEVERE, null, ex);
@@ -199,11 +233,12 @@ public final class AwtBackend extends Backend implements MouseWheelListener, Mou
     public void preUpdate(Game g, float dt) {
         getInput().set("pointer.x", mouse_x / cam_scalex - cam_offx);
         getInput().set("pointer.y", (mCanvas.getHeight() - mouse_y) / cam_scaley - cam_offy);
+        g.onRender();//<< This code renders after each update
     }
     
     @Override
     public void postUpdate(Game g, float dt) {
-        //g.onRender();//<< This code renders after each update
+        flush();
     }
     
     @Override
@@ -281,6 +316,13 @@ public final class AwtBackend extends Backend implements MouseWheelListener, Mou
             case KeyEvent.VK_SHIFT:
                 getInput().set("move.y", -1f);
                 break;
+                
+            case KeyEvent.VK_F1: getInput().set("debug1", true); break;
+            case KeyEvent.VK_F2: getInput().set("debug2", true); break;
+            case KeyEvent.VK_F3: getInput().set("debug3", true); break;
+            case KeyEvent.VK_F4: getInput().set("debug4", true); break;
+            case KeyEvent.VK_F5: getInput().set("debug5", true); break;
+            case KeyEvent.VK_F6: getInput().set("debug6", true); break;
             
             default: break;
         }
@@ -314,6 +356,13 @@ public final class AwtBackend extends Backend implements MouseWheelListener, Mou
             case KeyEvent.VK_ENTER:
                 getInput().set("reset", true);
                 break;
+            
+            case KeyEvent.VK_F1: getInput().set("debug1", false); break;
+            case KeyEvent.VK_F2: getInput().set("debug2", false); break;
+            case KeyEvent.VK_F3: getInput().set("debug3", false); break;
+            case KeyEvent.VK_F4: getInput().set("debug4", false); break;
+            case KeyEvent.VK_F5: getInput().set("debug5", false); break;
+            case KeyEvent.VK_F6: getInput().set("debug6", false); break;
                 
             default: break;
         }

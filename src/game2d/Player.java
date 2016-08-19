@@ -5,10 +5,13 @@ import engine2d.Renderer;
 import engine2d.Sprite;
 import engine2d.level.Entity;
 import engine2d.level.Mob;
-import java.util.Random;
 
 public class Player extends Mob {
     private static final float WALL_JMP_COOLDOWN = 1;
+    
+    private static final float WALK_SPEED  = 20;
+    private static final float FLY_CONTROL = 0.3f;
+    private static final float FLY_MAX     = 6f;
     
     Sprite mSpriteJumpL;
     Sprite mSpriteJumpR;
@@ -36,6 +39,8 @@ public class Player extends Mob {
     private void init() {
         setHitbox(2, 2);
         weight = 4.f;
+        mMaxHealth = 50f;
+        mHealth = mMaxHealth;
         
         mSpriteStandL = loadSprite("sprite/pika-stand-l.png");
         mSpriteStandR = loadSprite("sprite/pika-stand-r.png");
@@ -58,57 +63,22 @@ public class Player extends Mob {
     }
     
     @Override
-    public boolean onKill() {
-        Random r = new Random();
-            
-        for(int i = 0; i < width * height * 20; i++) {
-            final float min_size = 0.05f;
-            final float max_size = 0.4f;
-            final float speed = 10f;
-                
-            float angle = r.nextFloat() * TWO_PI;
-            
-            float ex = cache_x_min + r.nextFloat() * width;
-            float ey = cache_y_min + r.nextFloat() * height;
-               
-            float rand_size = r.nextFloat();
-               
-            float size = min_size * (1 - rand_size) + max_size * rand_size;
-               
-            float sin = sin(angle) * speed;
-            float cos = cos(angle) * speed;
-                
-            Entity p = new BloodParticle(ex, ey, sin, cos, size, .5f);
-            p.setCollisionMask(Entity.MASK_DEFAULT);
-            p.weight = size * size * 100f;
-            getLevel().add(p);
-        }
-        
-        return true;
-    }
-    
-    @Override
     public void onUpdate(float dt) {
         mWallJumpCooldown -= dt;
         
-        if(mInput.poll("pointer.down")) {
-            /*float mx = mInput.getValue("pointer.x") - x;
-            float my = mInput.getValue("pointer.y") - y;
-            accelerate(mx * .1f, my * .1f);*/
-            
-            x = mInput.getValue("pointer.x");
-            y = mInput.getValue("pointer.y");
-            motion_x = motion_y = 0;
-        }
+        mOnGround = getLevel().onGround(this, 0.2f, 0.7f);
         
         float dy = mInput.getValue("move.y");
         float dx = mInput.getValue("move.x");
         
-        if(mWallJumpCooldown <= 0 && dx * motion_x < 0 || abs(dx) > abs(motion_x)) {
-            if(mOnGround)
-                motion_x = dx * 10;
-            else
-                motion_x += dx;
+        if(mOnGround) {
+            motion_x = dx * WALK_SPEED;
+        }
+        else if(mWallJumpCooldown <= 0) {
+            if(abs(motion_x) <= FLY_MAX)
+                motion_x = clamp(motion_x + dx * FLY_CONTROL, -FLY_MAX, FLY_MAX);
+            else if(motion_x * dx < 0)
+                motion_x += dx * 0.1f;
         }
         
         if(mOnWall != 0)
@@ -124,9 +94,9 @@ public class Player extends Mob {
                 motion_y = weight != 0 ? dy * 8 / weight : 0;
             
             if(mOnWall > 0)
-                motion_x = 20;
-            else
                 motion_x = -20;
+            else
+                motion_x = 20;
         }
         
         if(!mOnGround && mOnWall == 0)
@@ -134,29 +104,69 @@ public class Player extends Mob {
         else
             selectStandingSprites();
         
+        if(mInput.poll("debug1"))
+            System.out.println("Player: x=" + floor_int(x) + " y=" + floor_int(y));
+        
+        if(mInput.poll("debug3"))
+            setPosition(652, 89);
+        
+        if(mInput.is("pointer.down")) {
+            float mx = mInput.getValue("pointer.x") - x;
+            float my = mInput.getValue("pointer.y") - y;
+            
+            for(int i = 0; i < 4; ++i) {
+                float heightr = rndf();
+                Entity e = new PlayerProjectile(
+                        this,
+                        getCachePositionX(), lerp(cache_y_min, cache_y_max, heightr), 
+                        .1f,
+                        rndf(1, 5),
+                        lerp_argb(0xFFFF0000, 0xFF0000FF, heightr)
+                    );
+                e.weight = 0.5f;
+                e.motion_x = mx + motion_x;
+                e.motion_y = my + motion_y;
+                getLevel().add(e);
+            }
+            
+            motion_x -= mx * 0.1f;
+            motion_y -= my * 0.1f;
+        }
+        
         super.onUpdate(dt);
     }
     
     @Override
-    public void onPostUpdate(float dt) {
-        mOnGround = false;
+    public int onDamage(Entity source, Entity cause, String msg, float damage) {
+        int re = super.onDamage(source, cause, msg, damage);
+        
+        System.out.println("Took " + damage + " damage: " + msg);
+        if(re == KILLED)
+            System.out.println("You died.");
+        
+        return re;
+    }
+    
+    @Override
+    public void onPostUpdate(float f) {
         mOnWall = 0;
     }
     
     @Override
-    public void onResolve(Entity e, float dx, float dy) {
-        super.onResolve(e, dx, dy);
-        
-        if(e == null) // If colliding with the level
-        {
-            mOnGround = dy > 0;
-            mOnWall = dx == 0 ? 0 : (dx < 0 ? -1 : 1);
-        }
+    public void onResolve(Entity e, float x, float y) {
+        if(x < 0) mOnWall = 1;
+        else if(x > 0) mOnWall = -1;
+        super.onResolve(e, x, y);
     }
     
     @Override
     public void onDraw(Renderer r) {
         if(mCurrentSprite != null)
                 r.drawSprite(mCurrentSprite, cache_x_min, cache_y_min + (mOnGround ? cos(cache_x_min * 3f) * .05f * height : 0f), width, height);
+        
+        float bar_width = (mHealth / mMaxHealth) * width;
+        float bar_height = height * .1f;
+        r.drawRect(0xFF991111, cache_x_min, cache_y_max + bar_height, bar_width, bar_height);
+        r.drawRect(0xFF441111, cache_x_min + bar_width, cache_y_max + bar_height, width - bar_width, bar_height);
     }
 }

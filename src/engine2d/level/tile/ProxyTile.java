@@ -9,11 +9,9 @@ import engine2d.level.Entity;
 import engine2d.level.Tile;
 
 /**
- *
  * @author benno
  */
 public class ProxyTile extends Tile {
-
     private Tile mFwdTo;
 
     public ProxyTile(Tile owner) {
@@ -31,7 +29,12 @@ public class ProxyTile extends Tile {
     }
 
     @Override
-    public boolean onTouch(Entity e, int x, int y) {
-        return mFwdTo.onTouch(e, x, y);
+    public void onResolve(Entity e, int x, int y) {
+        mFwdTo.onResolve(e, x, y);
+    }
+    
+    @Override
+    public boolean onDamage(Entity src, float amount) {
+        return mFwdTo.onDamage(src, amount);
     }
 }

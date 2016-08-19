@@ -1,21 +1,25 @@
 package engine2d.level.particle;
 
+import engine2d.GameMath;
 import engine2d.Renderer;
 import engine2d.level.Entity;
 import engine2d.level.Mob;
+import game2d.Floater;
 
 public class DamagingParticle extends FluidParticle {
-    float damage;
+    private Entity mOwner;
+    private float mDamage;
     
-    public DamagingParticle(float x, float y, float xm, float ym, int color, float size, float weight, float damage) {
+    public DamagingParticle(Entity owner, float x, float y, float xm, float ym, int color, float size, float weight, float damage) {
         super(x, y, xm, ym, size, weight);
-        this.damage = damage;
+        mOwner = owner;
+        mDamage = damage;
     }
     
     @Override
     public boolean onCollide(Entity other) {
         if(other instanceof Mob) {
-            ((Mob) other).onDamage(this, "explosion scrapnel", damage);
+            ((Mob) other).onDamage(mOwner, this, "explosion shrapnel", mDamage);
             kill();
         }
         
@@ -25,6 +29,12 @@ public class DamagingParticle extends FluidParticle {
     @Override
     public void onResolve(Entity e, float x, float y) {
         kill();
+    }
+    
+    @Override
+    public boolean onKill() {
+        getLevel().add(new Floater(this, rndf(1, 10)));
+        return true;
     }
     
     @Override

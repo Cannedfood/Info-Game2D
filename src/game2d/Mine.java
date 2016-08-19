@@ -28,17 +28,15 @@ public class Mine extends Entity {
 
     @Override
     public boolean onKill() {
-        final Random r = getRandom();
-
         final float speed = 100f;
         final float size = 0.1f;
         final float mass = .001f;
-        final float damage = 0.01f;
+        final float damage = 0f;
 
         final float distance = 3f;
 
         for(float b = 0; b < PI * 2; b += PI / 1000) {
-            float rf = r.nextFloat();
+            float rf = rndf();
             float inv_rf = 1 - rf;
 
             float sin = sin(b);
@@ -55,6 +53,7 @@ public class Mine extends Entity {
                     | (int) (g1 * rf + inv_rf * g2) << 8;
 
             Entity e = new DamagingParticle(
+                    this,
                     x + cos * d, y + sin * d, //< position
                     cos * speed, sin * speed, //< motion
                     c, //< color

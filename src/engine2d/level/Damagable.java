@@ -10,5 +10,17 @@ package engine2d.level;
  * @author benno
  */
 public interface Damagable {
-    public void onDamage(Entity e, String msg, float damage);
+    final static int 
+            UNDEFINED = 0,
+            MAGICAL = 1, 
+            PHYSICAL = 2,
+            VOID = 3;
+    
+    final static int
+            DEFLECTED = -1,
+            MISSED    = 0,
+            DAMAGED   = 1,
+            KILLED    = 2;
+    
+    public int onDamage(Entity source, Entity cause, String msg, float damage);
 }

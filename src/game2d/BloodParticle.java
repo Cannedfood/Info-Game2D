@@ -26,12 +26,15 @@ public class BloodParticle extends FluidParticle {
     
     private float mTouchCooldown = 0;
     
+    private float mLifetime = rndf(6, 4);
+    
     private float default_size;
     
     public BloodParticle(float x, float y, float xm, float ym, float size, float weight) {
         super(x, y, xm, ym, size, weight);
         
         default_size = size;
+        friction_mulitplier = 0f;
         
         mPuddleSprite = loadSprite("sprite/blob.png");
         mDropSprite   = loadSprite("sprite/drop.png");
@@ -48,6 +51,9 @@ public class BloodParticle extends FluidParticle {
     
     @Override
     public void onPostUpdate(float dt) {
+        mLifetime -= dt;
+        if(mLifetime <= 0) kill();
+        
         mTouchCooldown -= dt;
         
         mOnGround = mTmpOnGround;
@@ -67,7 +73,7 @@ public class BloodParticle extends FluidParticle {
                 mTouchCooldown = COOLDOWN;
                 y += .3f * -e.motion_y;
                 motion_y += 10f * -e.motion_y;
-                motion_x += getRandom().nextFloat() - .5f;
+                motion_x += rndf() - .5f;
             }
             else
                 mTouchCooldown = COOLDOWN;

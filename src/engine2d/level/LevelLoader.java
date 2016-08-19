@@ -29,7 +29,7 @@ public class LevelLoader {
 
         for(int y = 0; y < from.getHeight(); y++) {
             for(int x = 0; x < from.getWidth(); x++) {
-                l.setTile(x, y, get(from.colorAt(from.getWidth() - 1 - x, from.getHeight() - 1 - y)));
+                l.setTile(x, y, get(from.colorAt(x, from.getHeight() - 1 - y)));
             }
         }
 
@@ -44,7 +44,7 @@ public class LevelLoader {
 
         for(; y < from.getHeight() && y + yoff < to.getHeight(); y++) {
             for(; x < from.getWidth() && x + xoff < to.getWidth(); x++) {
-                to.setTile(x, y, get(from.colorAt(from.getWidth() - 1 - x, from.getHeight() - 1 - y)));
+                to.setTile(x, y, get(from.colorAt(x, from.getHeight() - 1 - y)));
             }
         }
     }

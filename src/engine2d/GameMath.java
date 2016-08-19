@@ -5,7 +5,7 @@
  */
 package engine2d;
 
-import java.awt.event.MouseWheelEvent;
+import java.util.Random;
 
 /**
  * A class which is partially a wrapper around the class Math, but provides extra methods
@@ -27,6 +27,14 @@ public abstract class GameMath {
     /* Interpolation */
     
     public static final float lerp(float a, float b, float k) { return a * (1 - k) + b * k; }
+    
+    public static final char  lerp(char a, char b, float k) { return (char)(lerp((float)a, (float)b, k)); }
+    public static final int lerp_argb(int a, int b, float k) {
+        return  ((int)(lerp((char)(a >> 24), (char)(b >> 24), k)) << 24) |
+                ((int)(lerp((char)(a >> 16), (char)(b >> 16), k)) << 16) |
+                ((int)(lerp((char)(a >>  8), (char)(b >>  8), k)) <<  8) |
+                ((int)(lerp((char)(a      ), (char)(b      ), k)));
+    }
 
     
     /* Float clamping */
@@ -45,6 +53,12 @@ public abstract class GameMath {
     public static final int clamp(int val, int min, int max) { return Math.min(max, Math.max(min, val)); }
     public static final int absmin(int a, int b) { return Math.abs(a) < Math.abs(b) ? a : b; }
     public static final int absmax(int a, int b) { return Math.abs(a) > Math.abs(b) ? a : b; }
+    
+    public static final long max(long a, long b) { return Math.max(a, b); }
+    public static final long min(long a, long b) { return Math.min(a, b); }
+    public static final long clamp(long val, long min, long max) { return Math.min(max, Math.max(min, val)); }
+    public static final long absmin(long a, long b) { return Math.abs(a) < Math.abs(b) ? a : b; }
+    public static final long absmax(long a, long b) { return Math.abs(a) > Math.abs(b) ? a : b; }
     
     
     /* Rounding */
@@ -121,7 +135,13 @@ public abstract class GameMath {
         throw new UnsupportedOperationException("Not supported yet.");
     }
     
-    public static final float integrated_scale(float dt, float a, float scale) {
-        return a + a * (scale - 1) * dt;
-    }
+    public static final float integrated_scale(float dt, float a, float scale) { return a + a * (scale - 1) * dt; }
+    
+    /* Random shit */
+    private static Random random = new Random();
+    
+    public static final float rnd_lerp(float a, float b) { return lerp(a, b, random.nextFloat()); }
+    public static final float rndf(float base, float range) { return random.nextFloat() * range + base; }
+    public static final float rndf() { return random.nextFloat(); }
+    public static final float rndf(float a) { return random.nextFloat() * a; }
 }

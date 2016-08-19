@@ -1,9 +1,12 @@
 package engine2d.level;
 
+import engine2d.Debug;
+import engine2d.Game;
 import engine2d.GameMath;
 import engine2d.Renderer;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 
 /**
  * A level, managing entities and tiles as well as their physics and rendering.
@@ -42,8 +45,8 @@ public class Level extends GameMath {
 
         final int minx = max(0, floor_int(r.getCamera().cache_x_min));
         final int miny = max(0, floor_int(r.getCamera().cache_y_min));
-        final int maxx = min(mWidth - 1, ceil_int(r.getCamera().cache_x_max));
-        final int maxy = min(mHeight - 1, ceil_int(r.getCamera().cache_y_max));
+        final int maxx = min(mWidth - 1, floor_int(r.getCamera().cache_x_max));
+        final int maxy = min(mHeight - 1, floor_int(r.getCamera().cache_y_max));
 
         for(int y = miny; y <= maxy; y++) {
             int precalc_y = y * mWidth;
@@ -113,7 +116,8 @@ public class Level extends GameMath {
     }
 
     private void resolveLevelCollisions() {
-        for(Entity e : mEntities) {
+        for(int n = 0; n < mEntities.size(); ++n) {
+            Entity e = mEntities.get(n);
             for(int i = 0; i < 4; i++) { // TODO: optimize level collision
                 final int minx = max(0, floor_int(e.cache_x_min));
                 final int miny = max(0, floor_int(e.cache_y_min));
@@ -127,7 +131,7 @@ OUTER_LOOP:     for(int y = miny; y < maxy; ++y) {
                     int precalc_y = y * mWidth;
                     for(int x = minx; x < maxx; ++x) {
                         Tile t = mTiles[precalc_y + x];
-                        if(t != null && t.hasFlag(Tile.SOLID) && t.onTouch(e, x, y)) {
+                        if(t != null && t.hasFlag(Tile.SOLID)) {
                             first_collision = t;
                             cx = x;
                             cy = y;
@@ -138,27 +142,8 @@ OUTER_LOOP:     for(int y = miny; y < maxy; ++y) {
 
                 if(first_collision == null)
                     break;
-
-                float xp = cx - e.cache_x_max;
-                float xn = cx + 1 - e.cache_x_min;
-                float yp = cy - e.cache_y_max;
-                float yn = cy + 1 - e.cache_y_min;
-
-                float xd = absmin(xp, xn);
-                float yd = absmin(yp, yn);
-
-                if(abs(xd) < abs(yd)) {
-                    e.x += xd;
-                    e.onResolve(null, xd, 0);
-                    e.motion_x = 0;
-                    e.motion_y *= e.friction_mulitplier;
-                }
-                else {
-                    e.y += yd;
-                    e.onResolve(null, 0, yd);
-                    e.motion_y = 0;
-                    e.motion_x *= e.friction_mulitplier;
-                }
+                
+                first_collision.onResolve(e, cx, cy);
 
                 e.updateCache(e.x, e.y);
             }
@@ -283,7 +268,7 @@ OUTER_LOOP:     for(int y = miny; y < maxy; ++y) {
      * Gets a tile at a specific coordinate, or null if it is out of bounds.
      */
     public Tile sampleTile(float x, float y) {
-        return sampleTile((int) x, (int) y);
+        return sampleTile(floor_int(x), floor_int(y));
     }
 
     /**
@@ -304,22 +289,29 @@ OUTER_LOOP:     for(int y = miny; y < maxy; ++y) {
      * the ray.
      */
     public boolean traceTile(TileResult result, float xbeg, float ybeg, float xdst, float ydst) {
-        // TODO: test
+        if(Debug.DRAW_TRACING) Game.getBackend().drawLine(0xFFFF0000, xbeg, ybeg, xdst, ydst);
         float dx = xdst - xbeg;
         float dy = ydst - ybeg;
 
         if(abs(dx) > abs(dy)) {
             float step = dy / dx;
+            int beg = (int) xbeg;
+            int end = (int) xdst;
+            int xstep = xbeg < xdst ? 1 : -1;
+            step *= xstep;
 
-            while(xbeg < xdst) {
-                Tile t = sampleTile(xbeg, ybeg);
+            while(beg != end) {
+                Tile t = sampleTile(beg, ybeg);
+                if(Debug.DRAW_TRACING) Game.getBackend().drawRect(0xFFFF0000, beg, floor_int(ybeg), 1, 1);
                 if(t == null || t.hasFlag(Tile.SOLID)) {
                     result.tile = t;
-                    result.x = (int) xbeg;
-                    result.y = (int) ybeg;
+                    result.x = beg;
+                    result.y = floor_int(ybeg);
+                    if(Debug.DRAW_TRACING) Game.getBackend().drawRect(0xFFFFFF00, result.x, result.y, 1, 1);
                     return true;
                 }
-                xbeg += 1;
+                
+                beg += xstep;
                 ybeg += step;
             }
 
@@ -327,16 +319,23 @@ OUTER_LOOP:     for(int y = miny; y < maxy; ++y) {
         }
         else {
             float step = dx / dy;
+            int beg = (int) ybeg;
+            int end = (int) ydst;
+            int ystep = ybeg < ydst ? 1 : -1;
+            step *= ystep;
 
-            while(ybeg < ydst) {
-                Tile t = sampleTile(xbeg, ybeg);
+            while(beg != end) {
+                Tile t = sampleTile(xbeg, beg);
+                if(Debug.DRAW_TRACING) Game.getBackend().drawRect(0xFFFF0000, floor_int(xbeg), beg, 1, 1);
                 if(t == null || t.hasFlag(Tile.SOLID)) {
                     result.tile = t;
-                    result.x = (int) xbeg;
-                    result.y = (int) ybeg;
+                    result.x = floor_int(xbeg);
+                    result.y = beg;
+                    if(Debug.DRAW_TRACING) Game.getBackend().drawRect(0xFFFFFF00, result.x, result.y, 1, 1);
                     return true;
                 }
-                ybeg += 1;
+                
+                beg += ystep;
                 xbeg += step;
             }
 
@@ -479,8 +478,67 @@ OUTER_LOOP:     for(int y = miny; y < maxy; ++y) {
      * @param angle_max
      * @param sample
      */
-    public void explode(float spread, float speed, float angle_min, float angle_max, EntityFactory sample) {
-        // TODO
+    public void explode(EntityFactory factory, float x, float y, int n, float min_speed, float max_speed, float min_angle, float max_angle) {
+        
+        for(int i = 0; i < n; i++) {
+            float angle = rnd_lerp(min_angle, max_angle);
+            float speed = rnd_lerp(min_speed, max_speed);
+            
+            float mx = cos(angle) * speed;
+            float my = sin(angle) * speed;
+            
+            add(factory.create().setPosition(x, y).setMotion(mx, my));
+        }
+    }
+    
+    public final boolean onRightWall(Entity e, float minimize, float dist) {
+        int x   = clamp(floor_int(e.cache_x_max + dist), 0, mWidth - 1);
+        int ymn = clamp(floor_int(e.cache_y_min + minimize), 0, mHeight - 1);
+        int ymx = clamp(floor_int(e.cache_y_max - minimize), 0, mHeight - 1);
+        for(int y = ymn; y <= ymx; y++) {
+            Tile t = mTiles[y * mWidth + x];
+            if(t != null && t.hasFlag(Tile.SOLID))
+                return true;
+        }
+        return false;
+    }
+    
+    public final boolean onLeftWall(Entity e, float minimize, float dist) { 
+        int x   = clamp(floor_int(e.cache_x_min - dist), 0, mWidth - 1);
+        int ymn = clamp(floor_int(e.cache_y_min + minimize), 0, mHeight - 1);
+        int ymx = clamp(floor_int(e.cache_y_max - minimize), 0, mHeight - 1);
+        for(int y = ymn; y <= ymx; y++) {
+            Tile t = mTiles[y * mWidth + x];
+            if(t != null && t.hasFlag(Tile.SOLID))
+                return true;
+        }
+        return false;
+    }
+    
+    public final boolean onGround(Entity e, float minimize, float dist) {
+        int y   = clamp(floor_int(e.cache_y_min - dist), 0, mHeight - 1);
+        int xmn = clamp(floor_int(e.cache_x_min + minimize), 0, mWidth - 1);
+        int xmx = clamp(floor_int(e.cache_x_max - minimize), 0, mWidth - 1);
+        int ypre = y * mWidth;
+        for(int x = xmn; x <= xmx; x++) {
+            Tile t = mTiles[ypre + x];
+            if(t != null && t.hasFlag(Tile.SOLID))
+                return true;
+        }
+        return false;
+    }
+    
+    public final boolean onCeiling(Entity e, float minimize, float dist) {
+        int y   = clamp(floor_int(e.cache_y_max + dist), 0, mHeight - 1);
+        int xmn = clamp(floor_int(e.cache_x_min + minimize), 0, mWidth - 1);
+        int xmx = clamp(floor_int(e.cache_x_max - minimize), 0, mWidth - 1);
+        int ypre = y * mWidth;
+        for(int x = xmn; x <= xmx; x++) {
+            Tile t = mTiles[ypre + x];
+            if(t != null && t.hasFlag(Tile.SOLID))
+                return true;
+        }
+        return false;
     }
 
     final public void setName(Entity e, String name) { mByName.put(name, e); }
@@ -493,4 +551,6 @@ OUTER_LOOP:     for(int y = miny; y < maxy; ++y) {
     public int getHeight() { return mHeight; }
 
     public ArrayList<Entity> getEntities() { return mEntities; }
+    public static final TileResult   getTileResult()   { return TILE_RESULT; }
+    public static final EntityResult getEntityResult() { return ENTITY_RESULT; }
 }

@@ -9,11 +9,8 @@ import java.util.logging.Logger;
  * The class running everything
  */
 public class Game extends GameMath implements Runnable {
-    private static Random mLogicRandom = new Random();
     private static Level  LEVEL;
     private static Backend BACKEND;
-    
-    public static Random getRandom() { return mLogicRandom; }
     
     /** Sets the backend (statically)
      * @param backend The new back end */
@@ -72,8 +69,10 @@ public class Game extends GameMath implements Runnable {
     /** Entry point for the Logic thread. */
     public void run() {
         while(mRunning) {
+            long beg = System.currentTimeMillis();
             onUpdate(.01f);
-            try { Thread.sleep(10); } 
+            long end = System.currentTimeMillis();
+            try { Thread.sleep(max(0, 10 - end + beg)); } 
             catch (InterruptedException ex) {
                 Logger.getLogger(Game.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
             }
@@ -81,11 +80,9 @@ public class Game extends GameMath implements Runnable {
     }
     
     /** Renders the whole level.
-     * Will not call Backend.flush()!
      */
     public void onRender() {
         LEVEL.onDraw(getBackend());
-        getBackend().flush();
     }
     
     /** Is called by the logic thread on every logic tick. */

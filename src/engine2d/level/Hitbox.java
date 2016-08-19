@@ -19,7 +19,7 @@ public class Hitbox extends GameMath {
     }
     
     public final void setHitbox(float w, float h) {
-        setHitbox(w * -.5f, h * -.5f, w, h);
+        setHitbox(-w * .5f, -h * .5f, w, h);
     }
     
     public final void setHitbox(float offx, float offy, float w, float h) {
@@ -34,9 +34,9 @@ public class Hitbox extends GameMath {
     }
     
     public final void updateCache(float x, float y) {
-        cache_x_min = offset_x + x;
+        cache_x_min = x + offset_x;
         cache_x_max = cache_x_min + width;
-        cache_y_min = offset_y + y;
+        cache_y_min = y + offset_y;
         cache_y_max = cache_y_min + height;
     }
     
@@ -49,4 +49,7 @@ public class Hitbox extends GameMath {
     
     public final float getMiddleX() { return cache_x_min + width * .5f;  }
     public final float getMiddleY() { return cache_y_min + height * .5f; }
+    
+    public final float getCachePositionX() { return cache_x_min - offset_x; }
+    public final float getCachePositionY() { return cache_y_min - offset_y; }
 }

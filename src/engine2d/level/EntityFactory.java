@@ -9,6 +9,6 @@ package engine2d.level;
  *
  * @author benno
  */
-interface EntityFactory {
-    public Entity create(float x, float y, float mx, float my, int flags);
+public interface EntityFactory {
+    public Entity create();
 }

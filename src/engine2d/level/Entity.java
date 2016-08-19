@@ -101,7 +101,7 @@ public class Entity extends Hitbox {
     public final boolean hasFlag (int flag)  { return (mFlags & flag) != 0; }
     public final int     getFlags()          { return mFlags; }
     
-    public final void setCollisionMask(int mask) { mCollisionMask = mask; }
+    public final Entity setCollisionMask(int mask) { mCollisionMask = mask; return this; }
     public final int  getCollisionMask()         { return mCollisionMask; }
     
     /** Returns the magnitude of the motion vector. */
@@ -112,20 +112,29 @@ public class Entity extends Hitbox {
     /** Sets the speed while maintaining the direction.
      * @param target_speed the desired magnitude of the motion vector
      */
-    public void setSpeed(float target_speed) {
+    public final Entity setSpeed(float target_speed) {
         float scale = target_speed / getSpeed();
         motion_x *= scale;
         motion_y *= scale;
+        return this;
     }
     
-    public void setMotion(float mx, float my) {
+    public final Entity setMotion(float mx, float my) {
         motion_x = mx;
         motion_y = my;
+        return this;
     }
     
-    public void accelerate(float ax, float ay) {
+    public final Entity accelerate(float ax, float ay) {
         motion_x += ax;
         motion_y += ay;
+        return this;
+    }
+    
+    public final Entity setPosition(float x_, float y_) {
+        x = x_;
+        y = y_;
+        return this;
     }
     
     public final float getSurfaceDistance(float px, float py) {
@@ -140,6 +149,5 @@ public class Entity extends Hitbox {
     
     public final static Backend getBackend() { return Game.getBackend(); }
     public final static Level getLevel() { return Game.getLevel(); }
-    public final static Random getRandom() { return Game.getRandom(); }
     public final static Sprite loadSprite(String file) { return Game.getBackend().loadSprite(file); }
 }

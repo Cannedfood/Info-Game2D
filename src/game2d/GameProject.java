@@ -4,6 +4,7 @@ import engine2d.Game;
 import engine2d.Renderer;
 import engine2d.level.Entity;
 import engine2d.level.LevelLoader;
+import game2d.enemy.MrMelee;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -40,11 +41,11 @@ public class GameProject extends Game {
         
         LevelLoader ll = new LevelLoader();
         
-        ll.setTile(0xFFFFFFFF, new WhiteTile(0));
+        ll.setTile(0xFFFFFFFF, new BrightTile(0));
         ll.setTile(0xFF000000, new DarkTile(0));
         ll.setTile(0xFFFF0000, () -> new SolidTile());
         
-        loadLevel(ll, getBackend().loadSprite("level/demo.png"));
+        loadLevel(ll, getBackend().loadSprite("level/demo-large.png"));
         
         // Add player
         mPlayer = new Player(5, 50, 0f, 0f, getBackend().getInput());
@@ -54,6 +55,12 @@ public class GameProject extends Game {
         Entity e = new Mine(10, 10);
         e.weight = .4f;
         getLevel().add(e);
+        
+        getLevel().add(new MrMelee().setPosition(635, 115));
+        getLevel().add(new MrMelee().setPosition(632, 135));
+        
+        for(int i = 0; i < 10; i += 2)
+            getLevel().setTile(626 + i, 158, new RewardTile());
         
         /*if(bg_music == null)
             startTheMusic();
@@ -77,6 +84,9 @@ public class GameProject extends Game {
         cam_x = (mPlayer.x + cam_x) * .5f;
         cam_y = (mPlayer.y + cam_y) * .5f;
         r.setCamera(cam_x, cam_y, cam_size);
+        
         super.onRender();
+        
+        //getBackend().flush();
     }
 }
