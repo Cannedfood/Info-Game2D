@@ -3,7 +3,7 @@ package engine2d.level.particle;
 import engine2d.GameMath;
 import engine2d.Renderer;
 import engine2d.level.Entity;
-import engine2d.level.Mob;
+import engine2d.level.entity.Mob;
 import game2d.Floater;
 
 public class DamagingParticle extends FluidParticle {

@@ -1,7 +1,7 @@
 package engine2d.level.particle;
 
 import engine2d.level.Entity;
-import engine2d.level.Particle;
+import engine2d.level.entity.Particle;
 
 public class FluidParticle extends Particle {
     public FluidParticle(float x, float y, float xm, float ym, float size, float weight) {

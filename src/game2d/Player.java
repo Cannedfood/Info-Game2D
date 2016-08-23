@@ -4,7 +4,8 @@ import engine2d.Input;
 import engine2d.Renderer;
 import engine2d.Sprite;
 import engine2d.level.Entity;
-import engine2d.level.Mob;
+import engine2d.level.Level;
+import engine2d.level.entity.Mob;
 
 public class Player extends Mob {
     private static final float WALL_JMP_COOLDOWN = 1;
@@ -13,10 +14,10 @@ public class Player extends Mob {
     private static final float FLY_CONTROL = 0.3f;
     private static final float FLY_MAX     = 6f;
     
-    Sprite mSpriteJumpL;
-    Sprite mSpriteJumpR;
-    Sprite mSpriteStandL;
-    Sprite mSpriteStandR;
+    protected Sprite mSpriteJumpL,
+                     mSpriteJumpR,
+                     mSpriteStandL,
+                     mSpriteStandR;
     
     private final Input mInput;
     
@@ -24,19 +25,8 @@ public class Player extends Mob {
     private int     mOnWall   = 0;
     private float   mWallJumpCooldown = 0;
     
-    public Player(float x, float y, Input input) {
-        super(x, y);
+    public Player(Input input) {
         mInput = input;
-        init();
-    }
-    
-    public Player(float x, float y, float xm, float ym, Input input) {
-        super(x, y, xm, ym);
-        mInput = input;
-        init();
-    }
-    
-    private void init() {
         setHitbox(2, 2);
         weight = 4.f;
         mMaxHealth = 50f;
@@ -110,19 +100,18 @@ public class Player extends Mob {
         if(mInput.poll("debug3"))
             setPosition(652, 89);
         
-        if(mInput.is("pointer.down")) {
+        if(mInput.is("pointer.shoot1")) {
             float mx = mInput.getValue("pointer.x") - x;
             float my = mInput.getValue("pointer.y") - y;
             
             for(int i = 0; i < 4; ++i) {
                 float heightr = rndf();
                 Entity e = new PlayerProjectile(
-                        this,
-                        getCachePositionX(), lerp(cache_y_min, cache_y_max, heightr), 
+                        this, 
                         .1f,
                         rndf(1, 5),
                         lerp_argb(0xFFFF0000, 0xFF0000FF, heightr)
-                    );
+                    ).setPosition(getCachePositionX(), lerp(cache_y_min, cache_y_max, heightr));
                 e.weight = 0.5f;
                 e.motion_x = mx + motion_x;
                 e.motion_y = my + motion_y;
@@ -131,6 +120,34 @@ public class Player extends Mob {
             
             motion_x -= mx * 0.1f;
             motion_y -= my * 0.1f;
+        }
+        
+        /*if(mInput.poll("pointer.shoot2")) {
+            final float bullet_speed = 15f;
+            final float knockback_speed = 8f;
+            final float radius = 20;
+            
+            float mx = mInput.getValue("pointer.x") - x;
+            float my = mInput.getValue("pointer.y") - y;
+            float len = length(mx, my);
+            mx /= len;
+            my /= len;
+            
+            Entity e = new PlayerProjectile(this, 100, radius / bullet_speed, 0xFFFFFFFF).setPosition(x, y);
+            e.weight = 0;
+            e.motion_x = mx * bullet_speed;
+            e.motion_y = my * bullet_speed;
+            
+            motion_x -= mx * knockback_speed;
+            motion_y -= my * knockback_speed;
+            
+            
+            
+            getLevel().add(e);
+        }*/
+        
+        if(mInput.is("pointer.shoot2")) {
+            getLevel().traceEntity(Level.ENTITY_RESULT, x, y, mInput.getValue("pointer.x"), mInput.getValue("pointer.y"));
         }
         
         super.onUpdate(dt);
@@ -166,7 +183,7 @@ public class Player extends Mob {
         
         float bar_width = (mHealth / mMaxHealth) * width;
         float bar_height = height * .1f;
-        r.drawRect(0xFF991111, cache_x_min, cache_y_max + bar_height, bar_width, bar_height);
+        r.drawRect(0xFF119911, cache_x_min, cache_y_max + bar_height, bar_width, bar_height);
         r.drawRect(0xFF441111, cache_x_min + bar_width, cache_y_max + bar_height, width - bar_width, bar_height);
     }
 }

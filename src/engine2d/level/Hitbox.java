@@ -33,6 +33,26 @@ public class Hitbox extends GameMath {
         setHitbox(other.offset_x, other.offset_y, other.width, other.height);
     }
     
+    public final boolean raytest(float x0, float y0, float x, float y) {
+        return raytest(x0, y0, x, y, 1/x, 1/y);
+    }
+    
+    public final boolean raytest(float x0, float y0, float x, float y, float inv_x, float inv_y) {
+        float tx1 = (cache_x_min - x0) * inv_x;
+        float tx2 = (cache_x_max - x0) * inv_x;
+        
+        float tmin = min(tx1, tx2);
+        float tmax = max(tx1, tx2);
+        
+        float ty1 = (cache_y_min - y0) * inv_y;
+        float ty2 = (cache_y_max - y0) * inv_y;
+        
+        tmin = max(tmin, min(ty1, ty2));
+        tmax = min(tmax, max(ty1, ty2));
+        
+        return tmax >= tmin;
+    }
+    
     public final void updateCache(float x, float y) {
         cache_x_min = x + offset_x;
         cache_x_max = cache_x_min + width;

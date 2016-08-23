@@ -1,0 +1,21 @@
+﻿I'm sorry, but an uncaught exception occurred.
+
+While loading the script.
+Exception: Module _errorhandling could not be loaded.
+
+-- Full Traceback ------------------------------------------------------------
+
+Full traceback:
+  File "/usr/share/renpy/renpy/bootstrap.py", line 281, in bootstrap
+    renpy.main.main()
+  File "/usr/share/renpy/renpy/main.py", line 323, in main
+    renpy.exports.load_module("_errorhandling")
+  File "/usr/share/renpy/renpy/exports.py", line 2138, in load_module
+    initcode = renpy.game.script.load_module(name)
+  File "/usr/share/renpy/renpy/script.py", line 275, in load_module
+    raise Exception("Module %s could not be loaded." % name)
+Exception: Module _errorhandling could not be loaded.
+
+Linux-4.7.0-1-ARCH-x86_64-with-glibc2.2.5
+Ren'Py 6.99.8.959
+ 

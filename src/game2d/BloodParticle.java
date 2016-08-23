@@ -8,7 +8,7 @@ package game2d;
 import engine2d.Renderer;
 import engine2d.Sprite;
 import engine2d.level.Entity;
-import engine2d.level.Mob;
+import engine2d.level.entity.Mob;
 import engine2d.level.particle.FluidParticle;
 
 /**

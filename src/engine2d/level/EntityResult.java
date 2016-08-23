@@ -10,6 +10,6 @@ package engine2d.level;
  * @author benno
  */
 public class EntityResult {
-    float distance_squared;
-    Entity entity;
+    public float distance_squared;
+    public Entity entity;
 }

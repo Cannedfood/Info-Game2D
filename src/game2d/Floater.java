@@ -18,7 +18,6 @@ public class Floater extends Entity {
     float lifetime = 0;
     
     public Floater(Hitbox clone_from, float lifetime_) {
-        super(0, 0);
         lifetime = lifetime_;
         
         setHitbox(clone_from);
@@ -29,7 +28,6 @@ public class Floater extends Entity {
     }
     
     public Floater(float x_, float y_, float size, float lifetime_) {
-        super(0, 0);
         lifetime = lifetime_;
         
         setHitbox(size, size);

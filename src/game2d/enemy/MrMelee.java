@@ -8,7 +8,7 @@ package game2d.enemy;
 import engine2d.Debug;
 import engine2d.level.Entity;
 import engine2d.level.Level;
-import engine2d.level.Mob;
+import engine2d.level.entity.Mob;
 import game2d.Player;
 
 /**
@@ -27,7 +27,8 @@ public class MrMelee extends Mob {
     private float mLastSeenY  = 0;
 
     public MrMelee() {
-        super(1.5f, 1.5f);
+        setHitbox(2, 2);
+        
         mMaxHealth = 100f;
         mHealth = mMaxHealth;
 

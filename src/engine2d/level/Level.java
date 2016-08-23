@@ -1,12 +1,12 @@
 package engine2d.level;
 
+import engine2d.level.entity.EntityFactory;
 import engine2d.Debug;
 import engine2d.Game;
 import engine2d.GameMath;
 import engine2d.Renderer;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Random;
 
 /**
  * A level, managing entities and tiles as well as their physics and rendering.
@@ -350,7 +350,19 @@ OUTER_LOOP:     for(int y = miny; y < maxy; ++y) {
      * ray.
      */
     public boolean traceEntity(EntityResult result, float xbeg, float ybeg, float xdst, float ydst) {
-        // TODO
+        float dx = xdst - xbeg;
+        float dy = ydst - ybeg;
+        float len = length(dx, dy);
+        dx /= len;
+        dy /= len;
+        float inv_dx = 1 / dx;
+        float inv_dy = 1 / dy;
+        Game.getBackend().drawLine(0xFF880000, xbeg, ybeg, xdst, ydst);
+        for(Entity e : mEntities) {
+            if(e.raytest(xbeg, ybeg, dx, dy, inv_dx, inv_dy))
+                Game.getBackend().drawRect(0xFF880000, e);
+        }
+        
         return false;
     }
 
@@ -471,13 +483,6 @@ OUTER_LOOP:     for(int y = miny; y < maxy; ++y) {
         }
     }
 
-    /**
-     * @param spread
-     * @param speed
-     * @param angle_min
-     * @param angle_max
-     * @param sample
-     */
     public void explode(EntityFactory factory, float x, float y, int n, float min_speed, float max_speed, float min_angle, float max_angle) {
         
         for(int i = 0; i < n; i++) {

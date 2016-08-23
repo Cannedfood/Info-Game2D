@@ -8,7 +8,6 @@ package game2d;
 import engine2d.Renderer;
 import engine2d.Sprite;
 import engine2d.level.Entity;
-import engine2d.level.particle.SimpleParticle;
 import engine2d.level.tile.OverlayTile;
 
 /**
@@ -27,8 +26,9 @@ public class RewardTile extends OverlayTile {
     @Override
     public void onResolve(Entity e, int x, int y) {
         if(e instanceof Player) {
+            Sprite s = loadSprite("sprite/star.png");
             getLevel().explode(
-                    () -> new SimpleParticle(0, 0, 0, 0, 0xFF0000FF, .1f, .4f, rndf(1, 4)).setCollisionMask(Entity.MASK_GHOST), 
+                    () -> new SpriteParticle(0, 0, 0, 0, .1f, .4f, rndf(1, 4), s).setCollisionMask(Entity.MASK_GHOST), 
                     x + .5f, y + .5f, 300, 0, 7, 0, TWO_PI);
             popTile(x, y);
         }

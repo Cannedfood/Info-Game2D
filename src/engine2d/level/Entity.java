@@ -4,7 +4,8 @@ import engine2d.Backend;
 import engine2d.Game;
 import engine2d.Renderer;
 import engine2d.Sprite;
-import java.util.Random;
+import engine2d.level.Hitbox;
+import engine2d.level.Level;
 
 public class Entity extends Hitbox {
     public static final int 
@@ -31,17 +32,9 @@ public class Entity extends Hitbox {
     private int     mFlags = 0;
     /** */
     private int     mCollisionMask = MASK_DEFAULT;
-    
-    public Entity(float x, float y) {
-        super(1, 1);//!< Make default hitbox 1x1
-        this.x = x;
-        this.y = y;
-    }
-    
-    public Entity(float x, float y, float xm, float ym) {
-        this(x, y);
-        motion_x = xm;
-        motion_y = ym;
+
+    public Entity() {
+        super(1, 1);
     }
     
     /*******************************************
@@ -134,6 +127,11 @@ public class Entity extends Hitbox {
     public final Entity setPosition(float x_, float y_) {
         x = x_;
         y = y_;
+        return this;
+    }
+    
+    public final Entity setWeight(float f) {
+        weight = f;
         return this;
     }
     

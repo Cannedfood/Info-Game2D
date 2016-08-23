@@ -8,7 +8,7 @@ package game2d;
 import engine2d.Renderer;
 import engine2d.level.Damagable;
 import engine2d.level.Entity;
-import engine2d.level.Mob;
+import engine2d.level.entity.Mob;
 
 /**
  *
@@ -21,8 +21,7 @@ public class PlayerProjectile extends Entity {
     private float        mLifetime;
     private boolean      mDisabled;
     
-    public PlayerProjectile(Player p, float x, float y, float damage, float lifetime, int color) {
-        super(x, y);
+    public PlayerProjectile(Player p, float damage, float lifetime, int color) {
         setHitbox(.1f, .1f);
         weight = .1f;
         mPlayer = p;

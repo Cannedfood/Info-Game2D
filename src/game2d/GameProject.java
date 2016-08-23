@@ -48,12 +48,15 @@ public class GameProject extends Game {
         loadLevel(ll, getBackend().loadSprite("level/demo-large.png"));
         
         // Add player
-        mPlayer = new Player(5, 50, 0f, 0f, getBackend().getInput());
+        mPlayer = new Player(getBackend().getInput());
+        mPlayer.setPosition(5, 50);
         getLevel().add(mPlayer);
         
         // Add mine thingy
-        Entity e = new Mine(10, 10);
-        e.weight = .4f;
+        Entity e = new Mine()
+                    .setPosition(10, 10)
+                    .setWeight(4);
+        
         getLevel().add(e);
         
         getLevel().add(new MrMelee().setPosition(635, 115));

@@ -39,6 +39,15 @@ public final class AwtBackend extends Backend implements MouseWheelListener, Mou
         public int getHeight() { return mImage.getHeight(); }
         @Override
         public int colorAt(int x, int y) { return mImage.getRGB(x, y); }
+
+        @Override
+        public void setAnimationTime(float f) {}
+        
+        @Override
+        public void setAnimationSpeed(float f) {}
+        
+        @Override
+        public boolean isAnimated() { return false; }
     }
     
     private final JFrame mFrame;
@@ -68,9 +77,13 @@ public final class AwtBackend extends Backend implements MouseWheelListener, Mou
         mGraphics = mCanvas.getBufferStrategy().getDrawGraphics();
         updateCamCache();
         
-        getInput().add("pointer.down", 0);
+        getInput().add("pointer.shoot1", 0);
+        getInput().add("pointer.shoot2", 0);
         getInput().add("pointer.x", 0);
         getInput().add("pointer.y", 0);
+        getInput().add("swap-l", 0); // TODO: hook this up to some key
+        getInput().add("swap-r", 0); // TODO: hook this up to some key
+        
         getInput().add("scroll state", 0);
         getInput().add("move.x", 0);
         getInput().add("move.y", 0);
@@ -188,7 +201,8 @@ public final class AwtBackend extends Backend implements MouseWheelListener, Mou
 
     @Override
     public void drawString(String s, float x, float y) {
-        mGraphics.drawString(s, (int)x, (int)y);
+        camSpace(x, y);
+        mGraphics.drawString(s, cy, cx);
     }
     
     @Override
@@ -267,14 +281,22 @@ public final class AwtBackend extends Backend implements MouseWheelListener, Mou
     public void mousePressed(MouseEvent e) {
         mouse_x = e.getX();
         mouse_y = e.getY();
-        getInput().set("pointer.down", true);
+        
+        if(e.getButton() == MouseEvent.BUTTON1)
+            getInput().set("pointer.shoot1", true);
+        else
+            getInput().set("pointer.shoot2", true);
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
         mouse_x = e.getX();
         mouse_y = e.getY();
-        getInput().set("pointer.down", false);
+        
+        if(e.getButton() == MouseEvent.BUTTON1)
+            getInput().set("pointer.shoot1", false);
+        else
+            getInput().set("pointer.shoot2", false);
     }
 
     @Override

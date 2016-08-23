@@ -1,10 +1,12 @@
-package engine2d.level;
+package engine2d.level.entity;
 
+import engine2d.level.Entity;
 import static engine2d.GameMath.TWO_PI;
 import static engine2d.GameMath.cos;
 import static engine2d.GameMath.sin;
 import engine2d.Renderer;
 import engine2d.Sprite;
+import engine2d.level.Damagable;
 import static engine2d.level.Entity.getLevel;
 import game2d.BloodParticle;
 import java.util.Random;
@@ -17,14 +19,6 @@ public class Mob extends Entity implements Damagable {
     protected Sprite mLeftSprite;
     protected Sprite mRightSprite;
     protected Sprite mCurrentSprite;
-    
-    public Mob(float x, float y) {
-        super(x, y);
-    }
-    
-    public Mob(float x, float y, float xm, float ym) {
-        super(x, y, xm, ym);
-    }
     
     public void updateSprite() {
         if(this.motion_x > 0)

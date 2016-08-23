@@ -3,7 +3,7 @@ package game2d;
 import engine2d.Renderer;
 import engine2d.Sprite;
 import engine2d.level.Entity;
-import engine2d.level.Mob;
+import engine2d.level.entity.Mob;
 import engine2d.level.particle.DamagingParticle;
 import java.util.Random;
 
@@ -11,17 +11,7 @@ public class Mine extends Entity {
 
     private Sprite mSprite;
 
-    public Mine(float x, float y) {
-        super(x, y);
-        init();
-    }
-
-    public Mine(float x, float y, float xm, float ym) {
-        super(x, y, xm, ym);
-        init();
-    }
-
-    private void init() {
+    public Mine() {
         weight = 4.f;
         mSprite = loadSprite("sprite/mine.png");
     }
