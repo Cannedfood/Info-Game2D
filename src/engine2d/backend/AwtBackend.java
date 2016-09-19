@@ -7,6 +7,7 @@ import engine2d.level.Hitbox;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -53,6 +54,7 @@ public final class AwtBackend extends Backend implements MouseWheelListener, Mou
     private final JFrame mFrame;
     private final Canvas mCanvas;
     private final Graphics mGraphics;
+    private final Font   mFont;
     
     public AwtBackend() {
         Dimension size = new Dimension(1280, 720);
@@ -76,6 +78,9 @@ public final class AwtBackend extends Backend implements MouseWheelListener, Mou
         mCanvas.createBufferStrategy(2);
         mGraphics = mCanvas.getBufferStrategy().getDrawGraphics();
         updateCamCache();
+        
+        mFont = new Font(Font.SANS_SERIF, Font.BOLD, 40);
+        mGraphics.setFont(mFont);
         
         getInput().add("pointer.shoot1", 0);
         getInput().add("pointer.shoot2", 0);
@@ -102,6 +107,8 @@ public final class AwtBackend extends Backend implements MouseWheelListener, Mou
         mCanvas.addKeyListener(this);
         
         mFrame.requestFocus();
+        
+        mGraphics.drawString("<Preload font>", 0, 0);
     }
     
     int mouse_x, mouse_y;
@@ -200,9 +207,14 @@ public final class AwtBackend extends Backend implements MouseWheelListener, Mou
     }
 
     @Override
-    public void drawString(String s, float x, float y) {
+    public void drawString(int color, String s, float x, float y) {
+        if(last_color != color) {
+            last_color = color;
+            mGraphics.setColor(new Color(color));
+        }
+        
         camSpace(x, y);
-        mGraphics.drawString(s, cy, cx);
+        mGraphics.drawString(s, cx, cy);
     }
     
     @Override

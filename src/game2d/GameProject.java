@@ -65,6 +65,8 @@ public class GameProject extends Game {
         for(int i = 0; i < 10; i += 2)
             getLevel().setTile(626 + i, 158, new RewardTile());
         
+        getLevel().add(new Message("Thing...Find chests...", 3).setPosition(mPlayer.x, mPlayer.y));
+        
         /*if(bg_music == null)
             startTheMusic();
         else

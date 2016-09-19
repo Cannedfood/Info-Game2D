@@ -4,7 +4,6 @@ import engine2d.Input;
 import engine2d.Renderer;
 import engine2d.Sprite;
 import engine2d.level.Entity;
-import engine2d.level.Level;
 import engine2d.level.entity.Mob;
 
 public class Player extends Mob {
@@ -122,7 +121,7 @@ public class Player extends Mob {
             motion_y -= my * 0.1f;
         }
         
-        /*if(mInput.poll("pointer.shoot2")) {
+        if(mInput.poll("pointer.shoot2")) {
             final float bullet_speed = 15f;
             final float knockback_speed = 8f;
             final float radius = 20;
@@ -144,13 +143,22 @@ public class Player extends Mob {
             
             
             getLevel().add(e);
-        }*/
-        
-        if(mInput.is("pointer.shoot2")) {
-            getLevel().traceEntity(Level.ENTITY_RESULT, x, y, mInput.getValue("pointer.x"), mInput.getValue("pointer.y"));
         }
         
+        /*
+        if(mInput.is("pointer.shoot2"))
+            getLevel().traceEntity(Level.ENTITY_RESULT, x, y, mInput.getValue("pointer.x"), mInput.getValue("pointer.y"));
+        */
+        
         super.onUpdate(dt);
+    }
+    
+    @Override
+    public boolean onKill() {
+        boolean killed = super.onKill();
+        if(killed)
+            getLevel().add(new Message("You kinda died...", 1000).setPosition(x, y));
+        return killed;
     }
     
     @Override
