@@ -144,4 +144,5 @@ public abstract class GameMath {
     public static final float rndf(float base, float range) { return random.nextFloat() * range + base; }
     public static final float rndf() { return random.nextFloat(); }
     public static final float rndf(float a) { return random.nextFloat() * a; }
+    public static final int   rndi(int i) { return random.nextInt(i); }
 }

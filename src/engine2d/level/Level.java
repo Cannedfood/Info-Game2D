@@ -1,5 +1,6 @@
 package engine2d.level;
 
+import engine2d.Backend;
 import engine2d.level.entity.EntityFactory;
 import engine2d.Debug;
 import engine2d.Game;
@@ -180,6 +181,8 @@ OUTER_LOOP:     for(int y = miny; y < maxy; ++y) {
      * @param dt The time difference since the last tick.
      */
     public void onUpdate(float dt) {
+        final int number_of_random_updates = 500;
+        
         // TODO: Make level collisions continuous
 
         synchronized(mEntities) {
@@ -219,6 +222,20 @@ OUTER_LOOP:     for(int y = miny; y < maxy; ++y) {
             }
 
             resolveLevelCollisions();
+        }
+        
+        synchronized(mTiles) {
+            int number_this_tick = number_of_random_updates;
+            for(int i = 0; i < number_this_tick; ++i) {
+                int x = rndi(mWidth);
+                int y = rndi(mHeight);
+                Tile t = mTiles[x + y * mWidth];
+                if(t != null) {
+                    if(Debug.DRAW_RANDOM_TILE_UPDATES)
+                        getBackend().drawRect(0xFFFFFFFF, x, y, 1, 1);
+                    t.onRandomUpdate(x, y, dt);
+                }
+           }
         }
     }
 
@@ -438,7 +455,7 @@ OUTER_LOOP:     for(int y = miny; y < maxy; ++y) {
     }
 
     /**
-     * Fills a rectangle with tiles of a certain type.
+     * Fills a rectangle with tiles of a certain type. (utility, only forwards arguments)
      */
     public void setTiles(float x, float y, float w, float h, Tile t) {
         setTiles((int) x, (int) y, (int) w, (int) h, t);
@@ -558,4 +575,5 @@ OUTER_LOOP:     for(int y = miny; y < maxy; ++y) {
     public ArrayList<Entity> getEntities() { return mEntities; }
     public static final TileResult   getTileResult()   { return TILE_RESULT; }
     public static final EntityResult getEntityResult() { return ENTITY_RESULT; }
+    public static final Backend      getBackend() { return Game.getBackend(); }
 }

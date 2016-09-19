@@ -15,12 +15,14 @@ import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
-public class GameProject extends Game {
+public class MyGame extends Game {
     private Player mPlayer;
     
     private Clip bg_music;
     
-    public GameProject() {
+    private int mRemainingGoals = 0;
+    
+    public MyGame() {
         reset();
     }
     
@@ -32,7 +34,7 @@ public class GameProject extends Game {
             bg_music.open(ais);
             bg_music.loop(Clip.LOOP_CONTINUOUSLY);
         } catch (LineUnavailableException | UnsupportedAudioFileException | IOException ex) {
-            Logger.getLogger(GameProject.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MyGame.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
@@ -43,7 +45,7 @@ public class GameProject extends Game {
         
         ll.setTile(0xFFFFFFFF, new BrightTile(0));
         ll.setTile(0xFF000000, new DarkTile(0));
-        ll.setTile(0xFFFF0000, () -> new SolidTile());
+        ll.setTile(0xFFFF0000, () -> new GrassTile());
         
         loadLevel(ll, getBackend().loadSprite("level/demo-large.png"));
         
@@ -62,10 +64,18 @@ public class GameProject extends Game {
         getLevel().add(new MrMelee().setPosition(635, 115));
         getLevel().add(new MrMelee().setPosition(632, 135));
         
-        for(int i = 0; i < 10; i += 2)
-            getLevel().setTile(626 + i, 158, new RewardTile());
+        for(int i = 0; i < 10; i += 2) {
+            mRemainingGoals++;
+            ChestTile t = new ChestTile();
+            t.addCollectionListener(() -> {
+                mRemainingGoals--;
+                System.out.println("Collected goal. " + mRemainingGoals + " remaining.");
+            });
+            getLevel().setTile(626 + i, 158, t);
+            System.out.println("Added goal " + mRemainingGoals + " remaining.");
+        }
         
-        getLevel().add(new Message("Thing...Find chests...", 3).setPosition(mPlayer.x, mPlayer.y));
+        getLevel().add(new Message("Thing...Collect chests...", 3).setPosition(mPlayer.x, mPlayer.y));
         
         /*if(bg_music == null)
             startTheMusic();
@@ -73,10 +83,24 @@ public class GameProject extends Game {
             bg_music.setFramePosition(0);*/
     }
     
+    private Entity mWinMessage = null;
+    
     @Override
     protected void onUpdate(float dt) {
         super.onUpdate(dt);
-        if(getBackend().getInput().poll("reset")) reset();
+        if(mRemainingGoals == 0 && mWinMessage == null) {
+            mWinMessage = new Message("Yay, you won. How great.", 3).setPosition(mPlayer.x, mPlayer.y);
+            getLevel().add(mWinMessage);
+            System.out.println("Spawned win message.");
+        }
+        
+        if(getBackend().getInput().poll("reset") ||
+                mWinMessage != null && mWinMessage.isDead()) 
+        {
+            mWinMessage.kill();
+            mWinMessage = null;
+            reset();
+        }
     }
     
     

@@ -14,7 +14,7 @@ public class Main {
         AwtBackend backend = new AwtBackend();
         Game.setBackend(backend);
         
-        Game game = new GameProject();
+        Game game = new MyGame();
         
         try { game.start(); } 
         catch (Exception ex) {

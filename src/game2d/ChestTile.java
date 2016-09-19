@@ -8,16 +8,21 @@ package game2d;
 import engine2d.Renderer;
 import engine2d.Sprite;
 import engine2d.level.Entity;
+import engine2d.level.entity.BasicEventListener;
 import engine2d.level.tile.OverlayTile;
+import java.util.ArrayList;
 
 /**
  *
  * @author benno
  */
-public class RewardTile extends OverlayTile {
+public class ChestTile extends OverlayTile {
     private final Sprite mSprite;
     
-    public RewardTile() {
+    private ArrayList<BasicEventListener> mCollectListeners
+            = new ArrayList<>();
+    
+    public ChestTile() {
         super(new DarkTile(0));
         setFlags(getFlags() | SOLID);
         mSprite = loadSprite("tile/chest.png");
@@ -31,6 +36,9 @@ public class RewardTile extends OverlayTile {
                     () -> new SpriteParticle(0, 0, 0, 0, .1f, .4f, rndf(1, 4), s).setCollisionMask(Entity.MASK_GHOST), 
                     x + .5f, y + .5f, 300, 0, 7, 0, TWO_PI);
             popTile(x, y);
+            for(BasicEventListener l : mCollectListeners) {
+                l.onBasicEvent();
+            }
         }
         
         super.onResolve(e, x, y);
@@ -40,5 +48,13 @@ public class RewardTile extends OverlayTile {
     public void onDraw(Renderer r, int x, int y) {
         super.onDraw(r, x, y);
         r.drawSprite(mSprite, x, y, 1, 1);
+    }
+    
+    public void addCollectionListener(BasicEventListener l) {
+        mCollectListeners.add(l);
+    }
+    
+    public void removeCollectionListener(BasicEventListener l) {
+        mCollectListeners.remove(l);
     }
 }

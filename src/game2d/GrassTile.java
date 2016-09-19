@@ -4,7 +4,7 @@ import engine2d.Renderer;
 import engine2d.Sprite;
 import engine2d.level.Tile;
 
-public class SolidTile extends Tile {
+public class GrassTile extends Tile {
     static final int
             BIT_TOP   = 1,
             BIT_LEFT  = 2,
@@ -23,12 +23,11 @@ public class SolidTile extends Tile {
     
     private int mSpriteIndex;
     
-    public SolidTile() {
+    public GrassTile() {
         super(SOLID);
     }
     
-    @Override
-    public void onTileUpdate(int x, int y) {
+    private void updateSpriteFromSurroundingBlocks(int x, int y) {
         Tile t;
         
         mSpriteIndex = 0;
@@ -44,6 +43,16 @@ public class SolidTile extends Tile {
         t = getLevel().sampleTile(x - 1, y);
         if(t != null && !t.hasFlag(Tile.SOLID))
             mSpriteIndex |= BIT_LEFT;
+    }
+    
+    @Override
+    public void onTileUpdate(int x, int y) {
+        // updateSpriteFromSurroundingBlocks(x, y);
+    }
+    
+    @Override
+    public void onRandomUpdate(int x, int y, float dt) {
+        updateSpriteFromSurroundingBlocks(x, y);
     }
     
     @Override

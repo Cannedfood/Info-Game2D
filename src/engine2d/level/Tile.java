@@ -52,6 +52,7 @@ public class Tile extends GameMath {
 
     public boolean onDestroy(int mode, int x, int y) { return true; }
     public void    onTileUpdate(int x, int y) {}
+    public void    onRandomUpdate(int x, int y, float dt) {}
     public boolean onDamage(Entity e, float amount) { return false; }
     public void    onResolve(Entity e, int x, int y) { resolveMinimal(e, x, y); }
     
